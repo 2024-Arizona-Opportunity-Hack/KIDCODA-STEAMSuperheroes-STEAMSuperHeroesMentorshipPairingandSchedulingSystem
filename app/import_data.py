@@ -113,7 +113,7 @@ def lambda_handler(event, context):
                 "Gender": row["Gender"].split(','),
                 "GenderPref": row["What is your preference regarding being matched with a person of the same gender identity?"],
                 "MentoringMethods": row["What methods of mentoring are you open to?"].split(','),
-                "Role": row["Choose the role you are signing up for"],
+                "Role": row["Choose the role you are signing up for"].split(" ")[0],
                 "GradeLevel": row["Grade"] if "Grade" in row else None,
                 "ReasonsForWantingMentoring": row["Reasons for wanting a mentor"] if "Reasons for wanting a mentor" in row else [],
                 "ReasonsForMentoring": row["Reasons for Mentoring"] if "Reasons for Mentoring" in row else [],
@@ -137,6 +137,10 @@ def lambda_handler(event, context):
 
             # Insert the user into DynamoDB
             insert_user(user_data)
+            if user_data["Role"] == "Mentor":
+                insert_mentor(user_data)
+            else:
+                insert_mentee(user_data)
 
     except ClientError as e:
         print(f"Error: {e}")
