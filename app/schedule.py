@@ -1,6 +1,22 @@
+import json
 import time
 import uuid
 from datetime import datetime, timedelta
+
+import boto3
+
+dynamodb = boto3.resource('dynamodb')
+pairings_table = dynamodb.Table('Pairings')
+meetings_table = dynamodb.Table('Meetings')
+
+def get_pairings():
+    response = pairings_table.scan()
+    data = response['Items']
+
+    while 'LastEvaluatedKey' in response:
+        response = pairings_table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+        data.extend(response['Items'])
+    return data
 
 def convert24(str1): 
     if str1[-2:] == "am" and str1[:2] == "12":
@@ -51,86 +67,19 @@ def get_overlaps(availability_a, availability_b):
     return overlap_times
 
 
-def get_pairings():
-    return [{
-        "PK": f"PAIR#{str(uuid.uuid4())}",
-        "MentorID": "1",
-        "MenteeID": "2",
-        "MentorName": "Apple",
-        "MenteeName": "Banana",
-        "MentorEmail": "Apple@gmail.com",
-        "MenteeEmail": "banana@gmail.com",
-        "SessionType": "meeting",
-        "AvailabilityofMentee": {
-            "Monday": ["8am to 11am"],
-            "Tuesday": ["6am to 11 pm", "1pm to 3pm"],
-            "Wednesday": ["6am to 12pm"],
-            "Thursday": [],
-            "Friday": [],
-            "Saturday": [],
-            "Sunday": []
-        },
-        "AvailabilityofMentor": {
-            "Monday": ["7am to 9am"],
-            "Tuesday": [],
-            "Wednesday": ["6am to 12pm"],
-            "Thursday": [],
-            "Friday": [],
-            "Saturday": [],
-            "Sunday": []
-        },
-        "cadence": "monthly",
-        "session_start_date": "20250103", 
-        "session_end_date": "20250701",
-        "IsActive": True,
-        "Notes": f"Scheduled meeting."
-    },{
-        "PK": f"PAIR#{str(uuid.uuid4())}",
-        "MentorID": "3",
-        "MenteeID": "4",
-        "MentorName": "Apple1",
-        "MenteeName": "Banana1",
-        "MentorEmail": "Apple1@gmail.com",
-        "MenteeEmail": "banana1@gmail.com",
-        "SessionType": "meeting",
-        "AvailabilityofMentee": {
-            "Monday": ["9am to 11am"],
-            "Tuesday": [],
-            "Wednesday": ["6am to 12pm"],
-            "Thursday": [],
-            "Friday": [],
-            "Saturday": [],
-            "Sunday": []
-        },
-        "AvailabilityofMentor": {
-            "Monday": [],
-            "Tuesday": [],
-            "Wednesday": ["6am to 10am"],
-            "Thursday": [],
-            "Friday": [],
-            "Saturday": [],
-            "Sunday": []
-        },
-        "cadence": "monthly",
-        "session_start_date": "20250103", 
-        "session_end_date": "20250701",
-        "IsActive": True,
-        "Notes": f"Scheduled meeting."
-    }]
-
-
 def create_meeting(meet, current_date, matched_pair):
-    meeting = {
-        "MentorID": matched_pair["MentorID"],
-        "MenteeID": matched_pair["MenteeID"],
-        "Availability": meet
-    }
+    # meeting = {
+    #     "Availability": meet
+    # }
+    meeting = {}
 
     available_weekdays = meet.keys()
 
     while True:
         if current_date.strftime('%A') in available_weekdays:
-            meeting["date"] = current_date
+            meeting["date"] = str(current_date)
+            meeting["day"] = current_date.strftime("%A")
+            meeting["Availability"] = meet[meeting["day"]]
             break
         current_date += timedelta(days=1)
 
@@ -140,7 +89,10 @@ def create_meeting(meet, current_date, matched_pair):
 def get_meetings_for_pair(start_date, end_date, meet, matched_pair):
     meetings = []
     current_date = start_date
-    cadence = matched_pair["cadence"]
+    cadence = matched_pair["Frequency"]
+
+    if cadence == "":
+        cadence = "monthly"
 
     delta = 30
     if cadence.lower() == "monthly":
@@ -162,19 +114,28 @@ def find_meeting_times(start_date, end_date):
     pair_meetings = {}
 
     for record in pairings:
-        overlaps = get_overlaps(record["AvailabilityofMentor"], record["AvailabilityofMentee"])
+        overlaps = get_overlaps(record["AvailabilityMentor"], record["AvailabilityMentee"])
         meet = {}
         for k,v in overlaps.items():
             if len(v) > 0:
                 meet[k] = v
-        pair_meetings[record["PK"]] = get_meetings_for_pair(start_date, end_date, meet, record)
+        pair_meetings[record["PairID"]] = {
+            "Meetings": get_meetings_for_pair(start_date, end_date, meet, record),
+            "MentorEmail": record["MentorEmail"],
+            "MenteeEmail": record["MenteeEmail"],
+            "MentorName": record["MentorName"],
+            "MenteeName": record["MenteeName"]
+        }
+
     return pair_meetings
 
 def schedule_meetings(start_date, end_date):
-    scheduled_meetings = find_meeting_times(start_date, end_date)
-    print(scheduled_meetings)
+    return find_meeting_times(start_date, end_date)
 
-session_start_date = datetime(2025, 1, 3)
-session_end_date = datetime(2025, 7, 1)
+def lambda_handler(event, context):
+    session_start_date = datetime(2025, 1, 3)
+    session_end_date = datetime(2025, 7, 1)
 
-schedule_meetings(session_start_date, session_end_date)
+    meetings = schedule_meetings(session_start_date, session_end_date)
+    for meeting_id, meeting in meetings.items():
+        meetings_table.put_item(Item={"MeetingID": meeting_id, "Meeting": meeting})
