@@ -54,6 +54,15 @@ gender_mapping = {"Cisgender Male": 1, "Cisgender Female": 2,
                   "Prefer not to disclose":5, "Others":6
 }
 
+session_type_mapping = {"Homework Help":1, "Exposure to STEAM in general":2, 
+                        "College guidance":3, "Career guidance":4,
+                        "Explore a particular field":5
+}
+
+mentoring_method_mapping = {"Web conference (ie. Zoom video conference)": 1,
+                            "In person": 2, "Hybrid (both web and in person)": 3,
+                            "Other:": 4}
+
 # References to DynamoDB tables
 users_table = dynamodb.Table('Users')
 mentors_table = dynamodb.Table('Mentors')
@@ -61,7 +70,7 @@ mentees_table = dynamodb.Table('Mentees')
 
 def transform_session_types(session_types_str):
     session_types = session_types_str.split(',')
-    session_data = [{"type": session_type.strip(), "is_match_found": False} for session_type in session_types]
+    session_data = [{"type": session_type_mapping.get(session_type.strip(),0), "is_match_found": False} for session_type in session_types]
     return session_data
 
 def get_state_abbreviation(state_str):
@@ -80,6 +89,9 @@ def map_gender(gender):
 
 def map_preference(preference_str):
     return preference_mapping.get(preference_str, 4)
+
+def map_methods(method):
+    return [mentoring_method_mapping.get(m, 0) for m in method]
 
 def get_age_average(age_str):
     if "+" in age_str:
@@ -113,7 +125,7 @@ def insert_mentor(user_data):
         "EthnicityPref": map_preference(user_data["EthnicityPref"]),
         "GenderPref":map_preference(user_data["EthnicityPref"]),
         "LocationCity": user_data["LocationCity"],
-        "MentoringMethods": user_data["MentoringMethods"],
+        "MentoringMethods": map_methods(user_data["MentoringMethods"]),
         "LocationState": get_state_abbreviation(user_data["LocationState"]),
         "AcademicLevel": map_academic_level(user_data["AcademicLevel"])
     }
@@ -139,7 +151,7 @@ def insert_mentee(user_data):
         "EthnicityPref": map_preference(user_data["EthnicityPref"]),
         "GenderPref": map_preference(user_data["EthnicityPref"]),
         "LocationCity": user_data["LocationCity"],
-        "MentoringMethods": user_data["MentoringMethods"],
+        "MentoringMethods": map_methods(user_data["MentoringMethods"]),
         "LocationState": get_state_abbreviation(user_data["LocationState"]),
         "Grade": map_academic_level(user_data["GradeLevel"])
     }
