@@ -71,6 +71,7 @@ def generate_dummy_mentors(count=20):
         mentors.append(mentor)
     return mentors
 
+
 def generate_dummy_mentees(count=20):
     mentees = []
     for _ in range(count):
@@ -83,7 +84,7 @@ def generate_dummy_mentees(count=20):
             "PhoneNumber": fake.phone_number(),
             "LocationCity": random.choice(cities),
             "LocationState": random.choice(states),
-            "SessionTypes": random.sample(session_types, k=random.randint(1, 3)),
+            "SessionTypes": [{"type": t, "is_match_found": False} for t in random.sample(session_types, k=random.randint(1, 3))],
             "Ethnicity": random.sample(ethnicities, k=1),
             "EthnicityPref": random.choice(ethnicity_preferences),
             "Gender": random.sample(genders, k=1),
@@ -159,8 +160,8 @@ def insert_mentee(user_data):
 
 
 def insert_dummy_data():
-    mentors = generate_dummy_mentors(20)
-    mentees = generate_dummy_mentees(20)
+    mentors = generate_dummy_mentors(300)
+    mentees = generate_dummy_mentees(300)
     
     for mentor in mentors:
         insert_mentor(mentor)
