@@ -8,10 +8,10 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
 # Configure S3
-S3_BUCKET = ""
-S3_ACCESS_KEY = ""
-S3_SECRET_KEY = ""
-S3_REGION = ""  # Example: 'us-east-1'
+# S3_BUCKET = "steam-csv-file-upload"
+# S3_ACCESS_KEY = ""
+# S3_SECRET_KEY = "
+# S3_REGION = "us-east-1"  # Example: 'us-east-1'
 
 # Temporary storage for OTPs
 user_otps = {}
@@ -88,15 +88,16 @@ def upload_file():
                 filename
                 # ExtraArgs={'ACL': 'public-read'}
             )
-            # flash('File uploaded successfully to S3!')
+            flash('File uploaded successfully to S3!') 
+            flash('Once a match is found email will be sent shortly!! Stay tuned !!!!!!')
             print('File uploaded successfully to S3!')
             return redirect(url_for('upload_page'))
         except Exception as e:
-            # flash(f'Error uploading file: {str(e)}')
+            flash(f'Error uploading file: {str(e)}')
             print(f'Error uploading file: {str(e)}')
             return redirect(url_for('upload_page'))
     else:
-        # flash('Only CSV files are allowed!')
+        flash('Only CSV files are allowed!')
         print('Only CSV files are allowed!')
         return redirect(url_for('upload_page'))
 

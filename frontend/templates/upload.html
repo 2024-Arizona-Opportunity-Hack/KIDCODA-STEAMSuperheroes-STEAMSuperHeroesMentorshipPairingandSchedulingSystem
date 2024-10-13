@@ -48,7 +48,7 @@
         }
         .upload-container button {
             padding: 10px 20px;
-            background-color: #28a745;
+            background-color: #0056b3;
             color: white;
             border: none;
             border-radius: 5px;
@@ -58,10 +58,10 @@
             transition: background-color 0.2s;
         }
         .upload-container button:hover {
-            background-color: #218838;
+            background-color: #7ca0c7;
         }
         .flash-message {
-            color: red;
+            color: blueviolet;
             margin-bottom: 15px;
         }
         @media (max-width: 480px) {
@@ -74,6 +74,15 @@
 <body>
     <div class="upload-container">
         <h2>Upload CSV File</h2>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-message">
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
         <form action="/upload" method="POST" enctype="multipart/form-data">
             <input type="file" name="file" accept=".csv" required>
             <button type="submit">Upload</button>
