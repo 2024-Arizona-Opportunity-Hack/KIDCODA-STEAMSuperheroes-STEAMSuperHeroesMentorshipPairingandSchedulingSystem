@@ -2,23 +2,54 @@ import time
 import uuid
 from datetime import datetime, timedelta
 
-def get_start_end_time(availability):
-    return [int(i) for i in availability["time"].split("-")]
+def convert24(str1): 
+    if str1[-2:] == "am" and str1[:2] == "12":
+        return "0"
+    elif str1[-2:] == "am": 
+        return str1[:-2]
+    elif str1[-2:] == "pm" and str1[:2] == "12":
+        return str1[:-2]
+    else: 
+        return str(int(str1[:-2]) + 12)
 
-def is_time_overlap(availability_a, availability_b):
-    start1, end1 = get_start_end_time(availability_a)
-    start2, end2 = get_start_end_time(availability_b)
-    return (max(start1, start2) <= min(end1, end2)) and (availability_a["day"].lower() == availability_b["day"].lower())
+def get_start_end_time(availability_time):
+    start_str, end_str = availability_time.split('to')
+    start = convert24(start_str.strip().lower())
+    end = convert24(end_str.strip().lower())
+    return (int(start),int(end))
 
-def get_overlap_availability(availability_a, availability_b):
-    start1, end1 = get_start_end_time(availability_a)
-    start2, end2 = get_start_end_time(availability_b)
-    overlap_start = max(start1, start2)
-    overlap_end = min(end1, end2)
-    return {
-        "day": availability_a["day"],
-        "time": f"{overlap_start}-{overlap_end}"
-    }
+def find_overlap(intervals1, intervals2):
+    overlaps = []
+    for start1, end1 in intervals1:
+        for start2, end2 in intervals2:
+            # Find overlap
+            start_overlap = max(start1, start2)
+            end_overlap = min(end1, end2)
+            if start_overlap < end_overlap:  # There's an overlap
+                overlaps.append((start_overlap, end_overlap))
+    return overlaps
+
+def get_overlaps(availability_a, availability_b):
+    av_a = {}
+    av_b = {}
+    for k, arr in availability_a.items():
+        arr1 = []
+        for dur in arr:
+            arr1.append(get_start_end_time(dur))
+        av_a[k] = arr1
+
+    for k, arr in availability_b.items():
+        arr2 = []
+        for dur in arr:
+            arr2.append(get_start_end_time(dur))
+        av_b[k] = arr2
+
+    overlap_times = {}
+    for day in av_a.keys():
+        if day in av_b:
+            overlap_times[day] = find_overlap(av_a[day], av_b[day])
+    return overlap_times
+
 
 def get_pairings():
     return [{
@@ -30,14 +61,24 @@ def get_pairings():
         "MentorEmail": "Apple@gmail.com",
         "MenteeEmail": "banana@gmail.com",
         "SessionType": "meeting",
-        "AvailabilityofMentee": [
-            {"day": "Monday", "time": "8-11"},
-            {"day": "Tuesday", "time": "6-12"}
-        ],
-        "AvailabilityofMentor": [
-            {"day": "Monday", "time": "8-11"},
-            {"day": "Wednesday", "time": "6-12"}
-        ],
+        "AvailabilityofMentee": {
+            "Monday": ["8am to 11am"],
+            "Tuesday": ["6am to 11 pm", "1pm to 3pm"],
+            "Wednesday": ["6am to 12pm"],
+            "Thursday": [],
+            "Friday": [],
+            "Saturday": [],
+            "Sunday": []
+        },
+        "AvailabilityofMentor": {
+            "Monday": ["7am to 9am"],
+            "Tuesday": [],
+            "Wednesday": ["6am to 12pm"],
+            "Thursday": [],
+            "Friday": [],
+            "Saturday": [],
+            "Sunday": []
+        },
         "cadence": "monthly",
         "session_start_date": "20250103", 
         "session_end_date": "20250701",
@@ -52,13 +93,24 @@ def get_pairings():
         "MentorEmail": "Apple1@gmail.com",
         "MenteeEmail": "banana1@gmail.com",
         "SessionType": "meeting",
-        "AvailabilityofMentee": [
-            {"day": "Wednesday", "time": "8-10"},
-            {"day": "Thursday", "time": "6-12"}
-        ],
-        "AvailabilityofMentor": [
-            {"day": "Wednesday", "time": "8-11"}
-        ],
+        "AvailabilityofMentee": {
+            "Monday": ["9am to 11am"],
+            "Tuesday": [],
+            "Wednesday": ["6am to 12pm"],
+            "Thursday": [],
+            "Friday": [],
+            "Saturday": [],
+            "Sunday": []
+        },
+        "AvailabilityofMentor": {
+            "Monday": [],
+            "Tuesday": [],
+            "Wednesday": ["6am to 10am"],
+            "Thursday": [],
+            "Friday": [],
+            "Saturday": [],
+            "Sunday": []
+        },
         "cadence": "monthly",
         "session_start_date": "20250103", 
         "session_end_date": "20250701",
@@ -67,23 +119,25 @@ def get_pairings():
     }]
 
 
-def create_meeting(overlap_availability, current_date, matched_pair):
+def create_meeting(meet, current_date, matched_pair):
     meeting = {
         "MentorID": matched_pair["MentorID"],
         "MenteeID": matched_pair["MenteeID"],
-        "time": overlap_availability["time"]
+        "Availability": meet
     }
-    weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday',    
-        'saturday', 'sunday']
-    day = overlap_availability["day"]
-    weekday = weekdays.index(day.lower())
 
-    day_shift = (weekday - current_date.weekday()) % 7
-    meeting["date"] = current_date + timedelta(days=day_shift)
+    available_weekdays = meet.keys()
+
+    while True:
+        if current_date.strftime('%A') in available_weekdays:
+            meeting["date"] = current_date
+            break
+        current_date += timedelta(days=1)
+
     return meeting
 
 
-def get_meetings_for_pair(start_date, end_date, overlap_availability, matched_pair):
+def get_meetings_for_pair(start_date, end_date, meet, matched_pair):
     meetings = []
     current_date = start_date
     cadence = matched_pair["cadence"]
@@ -97,7 +151,7 @@ def get_meetings_for_pair(start_date, end_date, overlap_availability, matched_pa
         delta = 7
 
     while current_date <= end_date:
-        meeting = create_meeting(overlap_availability, current_date, matched_pair)
+        meeting = create_meeting(meet, current_date, matched_pair)
         meetings.append(meeting)
 
         current_date += timedelta(delta)
@@ -108,13 +162,13 @@ def find_meeting_times(start_date, end_date):
     pair_meetings = {}
 
     for record in pairings:
-        for mentor_avail in record["AvailabilityofMentor"]:
-            for mentee_avail in record["AvailabilityofMentee"]:
-                if record["PK"] not in pair_meetings and is_time_overlap(mentee_avail, mentor_avail):
-                    overlap_availability = get_overlap_availability(mentor_avail, mentee_avail)
-                    pair_meetings[record["PK"]] = get_meetings_for_pair(start_date, end_date, overlap_availability, record)
+        overlaps = get_overlaps(record["AvailabilityofMentor"], record["AvailabilityofMentee"])
+        meet = {}
+        for k,v in overlaps.items():
+            if len(v) > 0:
+                meet[k] = v
+        pair_meetings[record["PK"]] = get_meetings_for_pair(start_date, end_date, meet, record)
     return pair_meetings
-
 
 def schedule_meetings(start_date, end_date):
     scheduled_meetings = find_meeting_times(start_date, end_date)
