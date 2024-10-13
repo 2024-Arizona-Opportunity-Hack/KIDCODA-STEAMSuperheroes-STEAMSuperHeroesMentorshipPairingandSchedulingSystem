@@ -93,7 +93,7 @@ def find_best_match():
 
             if best_match:
                 match_object = {
-                    "PK": f"PAIR#{str(uuid.uuid4())}",
+                    "PairID": f"PAIR#{str(uuid.uuid4())}",
                     "MentorName": best_match["Name"],
                     "MenteeName": mentee["Name"],
                     "MentorEmail": best_match["Email"],
