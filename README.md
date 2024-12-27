@@ -26,7 +26,7 @@ STEAM SuperHeroes is launching a mentoring program in 2025 and needs a system to
 For more detailed requirements, refer to the [STEAM SuperHeroes Mentor Program Requirements](https://steamsuperheroes.org/).
 
 ## Tech Stack
-- **Frontend**: HTML, CSS
+- **Frontend**: Flask, HTML, CSS
 - **Backend**: Python, Flask, AWS Lambda, AWS S3, AWS IAM
 - **Database**: AWS DynamoDB
 - **APIs**: AWS SES (for email notifications)
