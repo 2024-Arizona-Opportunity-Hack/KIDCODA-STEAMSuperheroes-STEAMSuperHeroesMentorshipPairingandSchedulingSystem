@@ -1,11 +1,10 @@
-from pydantic import BaseModel, Field
-from model_types.types import PyObjectId
+from app.db.base_class import Base
 
-class Session(BaseModel):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    name: str
+class Session(Base):
+    name: str # name of the session, should be unique
     description: str
     start_time: str
+    active: bool
     end_time: str
     location: str
     session_type: str
