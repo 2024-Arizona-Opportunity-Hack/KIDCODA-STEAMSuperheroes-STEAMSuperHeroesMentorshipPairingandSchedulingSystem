@@ -1,7 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field
 from typing import List, Optional
 from .enums import Grade, Ethnicity, Preference, Gender, SessionType, Method
-from model_types.types import PyObjectId
 from model_types.enums import (
     Grade,
     Preference,
@@ -26,9 +25,9 @@ class Mentee(BaseModel):
     interests: Optional[str] = None
     interestsOther: Optional[str] = None
 
-class UserPreferences(BaseModel):
+class UserPreference(BaseModel):
     email: EmailStr
-    session_id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    session_name: str #refers to name field in Session model
     name: str
     ageBracket: str
     phoneNumber: str
