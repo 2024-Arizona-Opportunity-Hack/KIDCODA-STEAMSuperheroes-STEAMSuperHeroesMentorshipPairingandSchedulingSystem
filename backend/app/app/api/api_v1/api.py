@@ -3,6 +3,8 @@ from fastapi import APIRouter
 from app.api.api_v1.endpoints import (
     login,
     users,
+    user_preferences,
+    session
 )
 
 api_router = APIRouter()
