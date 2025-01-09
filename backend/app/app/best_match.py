@@ -1,6 +1,7 @@
 from haversine import haversine, Unit
 from model_types.enums import Preference, SessionType
 from pymongo import MongoClient
+from models.matchings import Match
 # Configuration settings
 MAX_DISTANCE = 60  # Maximum distance in miles for matching
 
@@ -68,25 +69,17 @@ def find_best_match(mentees, mentors):
                 if not is_within_distance(mentor_location, mentee_location):
                     continue
 
-                # Create match object
-                match = {
-                    "mentor_email": mentor.email,
-                    "mentee_email": mentee.email,
-                    "session_type": mentee_session.type
-                }
+                # Create match object using the Match model
+                match = Match(
+                    mentor_email=mentor.email,
+                    mentee_email=mentee.email,
+                    session_type=mentee_session.type,
+                    session_name=mentee.session_name
+                )
 
-                # Update mentee session type
-                for session in mentee.mentee.sessionType:
-                    if session.type == mentee_session.type:
-                        session.is_match_found = True
-                        break
-
-                # Update mentor current mentees
-                for session in mentor.mentor.sessionType:
-                    if session.type == mentee_session.type:
-                        session.currentMentees += 1
-                        break
-
+                matches.append(match)
+                mentee_session.is_match_found = True
+                mentor_session.currentMentees += 1
                 updated_mentees.append(mentee)
                 updated_mentors.append(mentor)
                 matches.append(match)
