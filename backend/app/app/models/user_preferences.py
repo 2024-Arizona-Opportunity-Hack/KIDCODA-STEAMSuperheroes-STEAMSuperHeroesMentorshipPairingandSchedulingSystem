@@ -1,46 +1,76 @@
-from pydantic import BaseModel, EmailStr, Field
-from typing import List, Optional
-from app.model_types.enums import (
+from pydantic import BaseModel, Field, model_validator
+from typing import List, Optional, Dict
+from geopy.geocoders import Nominatim
+from model_types.enums import (
     Grade,
     Preference,
     Ethnicity,
     Gender,
     SessionType,
     Method,
+    TimeSlot,
 )
 
-from app.db.base_class import Base
+geolocator = Nominatim(user_agent="fastapi-geopy")
+
+def default_availability():
+    return {slot: False for slot in TimeSlot}
+
+
+class mentorSessionType(BaseModel):
+    type: SessionType
+    willingToAdvise: Optional[int] = None
+    currentMentees: Optional[int] = None
+
+class menteeSessionType(BaseModel):
+    type: SessionType
+    is_match_found: bool
 
 class Mentor(BaseModel):
+    sessionType: List[mentorSessionType]
     steamBackground: str
     academicLevel: Grade
     professionalTitle: str
     currentEmployer: str
     reasonsForMentoring: Optional[str] = None
-    willingToAdvise: Optional[int] = None
 
 class Mentee(BaseModel):
     grade: Grade
+    sessionType: List[menteeSessionType]
     reasonsForMentor: Optional[str] = None
     reasonsForMentorOther: Optional[str] = None
     interests: Optional[str] = None
     interestsOther: Optional[str] = None
 
-class UserPreferences(Base):
-    email: EmailStr
+class UserPreferences(BaseModel):
+    email: str
     session_name: str
     name: str
-    ageBracket: str
+    dateOfBirth: str
+    age: int
     phoneNumber: str
     city: str
     state: str
     ethnicities: List[Ethnicity]
     ethnicityPreference: Preference
-    gender: Gender
+    gender: List[Gender]
     genderPreference: Preference
-    sessionType: List[SessionType]
     methods: List[Method]
     role: str
-    mentor: Mentor
-    mentee: Mentee
-    availability: str
+    mentor: Optional[Mentor] = None
+    mentee: Optional[Mentee] = None
+    availability: Dict[TimeSlot, bool] = Field(default_factory=default_availability)
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+
+    @model_validator(mode='before')
+    def calculate_coordinates(cls, values):
+        if values.get('latitude') is None or values.get('longitude') is None:
+            city = values.get('city')
+            state = values.get('state')
+            if city and state:
+                location = geolocator.geocode(f"{city}, {state}, USA")
+            if location:
+                values['latitude'] = location.latitude
+                values['longitude'] = location.longitude
+        return values
