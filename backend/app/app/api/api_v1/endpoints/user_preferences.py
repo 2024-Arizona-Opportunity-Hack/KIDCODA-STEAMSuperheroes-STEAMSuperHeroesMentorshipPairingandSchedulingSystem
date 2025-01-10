@@ -30,10 +30,10 @@ async def upsert_user_preferences(*, user_preference_in: UserPreferenceCreate, d
     """
     Create new user preferences.
     """
-    try:
-        user_preferences = await pref_crud.upsert(db, obj_in=user_preference_in)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail="No session is currently active")
+    # try:
+    user_preferences = await pref_crud.upsert(db, obj_in=user_preference_in)
+    # except Exception as e:
+    #     raise HTTPException(status_code=400, detail="No session is currently active")
     return user_preferences
 
 @router.delete("/", dependencies=[Depends(deps.get_current_active_superuser)])

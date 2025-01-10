@@ -1,7 +1,9 @@
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, model_validator
+from odmantic import Field
+from app.db.base_class import Base
 from typing import List, Optional, Dict
 from geopy.geocoders import Nominatim
-from model_types.enums import (
+from app.model_types.enums import (
     Grade,
     Preference,
     Ethnicity,
@@ -42,7 +44,7 @@ class Mentee(BaseModel):
     interests: Optional[str] = None
     interestsOther: Optional[str] = None
 
-class UserPreferences(BaseModel):
+class UserPreference(Base):
     email: str
     session_name: str
     name: str
