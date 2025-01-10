@@ -26,7 +26,7 @@ class Mentee(BaseModel):
     interests: Optional[str] = None
     interestsOther: Optional[str] = None
 
-class UserPreferences(Base):
+class UserPreference(Base):
     email: EmailStr
     session_name: str
     name: str
@@ -44,3 +44,4 @@ class UserPreferences(Base):
     mentor: Mentor
     mentee: Mentee
     availability: str
+# Zipcode
