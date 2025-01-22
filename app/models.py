@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from typing import List, Optional
-from .enums import Grade, Ethnicity, Preference, Gender, SessionType, Method
+from .enums import Grade, Ethnicity, Preference, Gender, MentoringType, Method
 
 class Mentor(BaseModel):
     steamBackground: str
@@ -28,7 +28,7 @@ class UserData(BaseModel):
     ethnicityPreference: Preference
     gender: Gender
     genderPreference: Preference
-    sessionType: List[SessionType]
+    mentoringType: List[MentoringType]
     methods: List[Method]
     role: str
     mentor: Mentor

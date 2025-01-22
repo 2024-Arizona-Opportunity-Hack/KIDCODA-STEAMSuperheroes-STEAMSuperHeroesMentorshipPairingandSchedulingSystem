@@ -47,7 +47,7 @@ class Gender(str, Enum):
     PREFER_NOT_DISCLOSE = "Prefer not to disclose"
     OTHERS = "Others"
 
-class SessionType(str, Enum):
+class MentoringType(str, Enum):
     HOMEWORK_HELP = "Homework Help"
     EXPOSURE_STEAM = "Exposure to STEAM in general"
     COLLEGE_GUIDANCE = "College guidance"

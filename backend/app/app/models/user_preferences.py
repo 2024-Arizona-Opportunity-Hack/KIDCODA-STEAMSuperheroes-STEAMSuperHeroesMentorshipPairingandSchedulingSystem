@@ -1,35 +1,21 @@
-from pydantic import BaseModel, model_validator
-from odmantic import Field
-from app.db.base_class import Base
+from pydantic import BaseModel, EmailStr, Field, model_validator
 from typing import List, Optional, Dict
 from geopy.geocoders import Nominatim
-from app.model_types.enums import (
-    Grade,
-    Preference,
-    Ethnicity,
-    Gender,
-    SessionType,
-    Method,
-    TimeSlot,
-)
+from model_types.enums import Grade, Preference, Ethnicity, Gender, MentoringType, Method, TimeSlot, AgeBracket
 
 geolocator = Nominatim(user_agent="fastapi-geopy")
 
 def default_availability():
     return {slot: False for slot in TimeSlot}
 
-
-class mentorSessionType(BaseModel):
-    type: SessionType
-    willingToAdvise: Optional[int] = None
-    currentMentees: Optional[int] = None
-
-class menteeSessionType(BaseModel):
-    type: SessionType
+class menteeMentoringType(BaseModel):
+    type: MentoringType
     is_match_found: bool
 
 class Mentor(BaseModel):
-    sessionType: List[mentorSessionType]
+    mentoringType: List[MentoringType]
+    willingToAdvise: Optional[int] = None
+    currentMentees: Optional[int] = None
     steamBackground: str
     academicLevel: Grade
     professionalTitle: str
@@ -38,14 +24,14 @@ class Mentor(BaseModel):
 
 class Mentee(BaseModel):
     grade: Grade
-    sessionType: List[menteeSessionType]
+    mentoringType: List[menteeMentoringType]
     reasonsForMentor: Optional[str] = None
     reasonsForMentorOther: Optional[str] = None
     interests: Optional[str] = None
     interestsOther: Optional[str] = None
 
-class UserPreference(Base):
-    email: str
+class UserPreferences(BaseModel):
+    email: EmailStr
     session_name: str
     name: str
     dateOfBirth: str
@@ -64,6 +50,7 @@ class UserPreference(Base):
     availability: Dict[TimeSlot, bool] = Field(default_factory=default_availability)
     latitude: Optional[float] = None
     longitude: Optional[float] = None
+    ageBracket: AgeBracket
 
     @model_validator(mode='before')
     def calculate_coordinates(cls, values):

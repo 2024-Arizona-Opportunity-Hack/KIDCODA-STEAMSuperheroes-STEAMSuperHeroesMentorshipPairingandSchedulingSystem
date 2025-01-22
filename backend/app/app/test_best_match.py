@@ -1,6 +1,6 @@
 from haversine import haversine, Unit
-from model_types.enums import Preference, SessionType, Grade, Ethnicity, Gender, Method
-from models.user_preferences import UserPreferences, Mentor, Mentee, mentorSessionType, menteeSessionType
+from model_types.enums import Preference, MentoringType, Grade, Ethnicity, Gender, Method
+from models.user_preferences import UserPreferences, Mentor, Mentee, mentorMentoringType, menteeMentoringType, TimeSlot
 
 # Configuration settings
 MAX_DISTANCE = 60  # Maximum distance in miles for matching
@@ -10,12 +10,12 @@ def is_within_distance(mentor_location, mentee_location, max_distance=MAX_DISTAN
     return haversine(mentor_location, mentee_location, unit=Unit.MILES) <= max_distance
 
 def is_age_appropriate(mentor, mentee, mentoring_type):
-    if mentoring_type == SessionType.HOMEWORK_HELP:
+    if mentoring_type == MentoringType.HOMEWORK_HELP:
         return mentor.mentor.academicLevel >= mentee.mentee.grade
     return mentor.age >= mentee.age + 10
 
 def match_mentoring_type(mentor, mentee):
-    return any(mentoring_type.type in [s.type for s in mentee.mentee.sessionType] for mentoring_type in mentor.mentor.sessionType)
+    return any(mentoring_type.type in [s.type for s in mentee.mentee.mentoringType] for mentoring_type in mentor.mentor.mentoringType)
 
 def match_ethnicity(mentor, mentee):
     if mentor.ethnicityPreference == Preference.PREFER_ONLY or mentee.ethnicityPreference == Preference.PREFER_ONLY:
@@ -42,13 +42,13 @@ def find_best_match(mentees, mentors):
 
     for mentee in mentees:
         mentee_location = (mentee.latitude, mentee.longitude)
-        for mentee_session in mentee.mentee.sessionType:
+        for mentee_session in mentee.mentee.mentoringType:
             if mentee_session.is_match_found:
                 continue
             for mentor in mentors:
                 if mentee.email == mentor.email:
                     continue
-                mentor_session = next((s for s in mentor.mentor.sessionType if s.type == mentee_session.type), None)
+                mentor_session = next((s for s in mentor.mentor.mentoringType if s.type == mentee_session.type), None)
                 if mentor_session is None or mentor_session.currentMentees >= mentor_session.willingToAdvise:
                     continue
                 if not is_age_appropriate(mentor, mentee, mentee_session.type):
@@ -71,13 +71,13 @@ def find_best_match(mentees, mentors):
                 }
 
                 # Update mentee session type
-                for session in mentee.mentee.sessionType:
+                for session in mentee.mentee.mentoringType:
                     if session.type == mentee_session.type:
                         session.is_match_found = True
                         break
 
                 # Update mentor current mentees
-                for session in mentor.mentor.sessionType:
+                for session in mentor.mentor.mentoringType:
                     if session.type == mentee_session.type:
                         session.currentMentees += 1
                         break
@@ -107,13 +107,13 @@ mentors = [
         methods=[Method.WEB_CONFERENCE],
         role="mentor",
         mentor=Mentor(
-            sessionType=[mentorSessionType(type=SessionType.HOMEWORK_HELP, willingToAdvise=2, currentMentees=0)],
+            mentoringType=[mentorMentoringType(type=MentoringType.HOMEWORK_HELP, willingToAdvise=2, currentMentees=0)],
             steamBackground="Engineering",
             academicLevel=Grade.COLLEGE_SENIOR,
             professionalTitle="Engineer",
             currentEmployer="Tech Corp"
         ),
-        availability="Monday-7am to 9am"
+        availability={TimeSlot.MONDAY_7_9: True}
     ),
     UserPreferences(
         email="mentor2@example.com",
@@ -131,13 +131,13 @@ mentors = [
         methods=[Method.WEB_CONFERENCE],
         role="mentor",
         mentor=Mentor(
-            sessionType=[mentorSessionType(type=SessionType.CAREER_GUIDANCE, willingToAdvise=1, currentMentees=0)],
+            mentoringType=[mentorMentoringType(type=MentoringType.CAREER_GUIDANCE, willingToAdvise=1, currentMentees=0)],
             steamBackground="Science",
             academicLevel=Grade.GRADUATE_STUDENT,
             professionalTitle="Scientist",
             currentEmployer="Bio Corp"
         ),
-        availability="Tuesday-9am to 11am"
+        availability={TimeSlot.TUESDAY_9_11: True}
     )
 ]
 
@@ -159,10 +159,10 @@ mentees = [
         role="mentee",
         mentee=Mentee(
             grade=Grade.GRADE_10,
-            sessionType=[menteeSessionType(type=SessionType.HOMEWORK_HELP, is_match_found=False)],
+            mentoringType=[menteeMentoringType(type=MentoringType.HOMEWORK_HELP, is_match_found=False)],
             reasonsForMentor="Career Exploration"
         ),
-        availability="Monday-7am to 9am"
+        availability={TimeSlot.MONDAY_7_9: True}
     ),
     UserPreferences(
         email="mentee2@example.com",
@@ -181,10 +181,10 @@ mentees = [
         role="mentee",
         mentee=Mentee(
             grade=Grade.GRADE_11,
-            sessionType=[menteeSessionType(type=SessionType.CAREER_GUIDANCE, is_match_found=False)],
+            mentoringType=[menteeMentoringType(type=MentoringType.CAREER_GUIDANCE, is_match_found=False)],
             reasonsForMentor="College Guidance"
         ),
-        availability="Tuesday-9am to 11am"
+        availability={TimeSlot.TUESDAY_9_11: True}
     )
 ]
 

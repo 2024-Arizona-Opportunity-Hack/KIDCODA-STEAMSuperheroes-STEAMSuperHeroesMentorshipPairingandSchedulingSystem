@@ -67,7 +67,7 @@ def find_best_match():
     for mentee in mentees:
         location_filtered_mentors = [mentor for mentor in mentors if mentor["LocationState"] in mentee["LocationState"]]
 
-        for session_type in mentee["SessionTypes"]:
+        for session_type in mentee["MentoringTypes"]:
             if session_type["is_match_found"]:
                 continue
             
@@ -98,7 +98,7 @@ def find_best_match():
                     "MenteeName": mentee["Name"],
                     "MentorEmail": best_match["Email"],
                     "MenteeEmail": mentee["Email"],
-                    "SessionType": session_type["type"],
+                    "MentoringType": session_type["type"],
                     "AvailabilityMentee": mentee["AvailableTimes"],
                     "AvailabilityMentor": best_match["AvailableTimes"],
                     "Frequency": "",  # Can be filled later
@@ -108,7 +108,7 @@ def find_best_match():
                 }
                 matches_to_insert.append(match_object)
 
-                for s_type in mentee["SessionTypes"]:
+                for s_type in mentee["MentoringTypes"]:
                     if s_type["type"] == session_type["type"]:
                         s_type["is_match_found"] = True
                 mentees_to_update.append(mentee)

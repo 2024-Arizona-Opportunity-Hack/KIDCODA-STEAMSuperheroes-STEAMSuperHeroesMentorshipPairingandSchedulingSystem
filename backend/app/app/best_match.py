@@ -1,5 +1,5 @@
 from haversine import haversine, Unit
-from model_types.enums import Preference, SessionType
+from model_types.enums import Preference, MentoringType, Method, AgeBracket
 from pymongo import MongoClient
 from models.matchings import Match
 # Configuration settings
@@ -10,12 +10,25 @@ def is_within_distance(mentor_location, mentee_location, max_distance=MAX_DISTAN
     return haversine(mentor_location, mentee_location, unit=Unit.MILES) <= max_distance
 
 def is_age_appropriate(mentor, mentee, mentoring_type):
-    if mentoring_type == SessionType.HOMEWORK_HELP:
+    if mentoring_type == MentoringType.HOMEWORK_HELP:
         return mentor.mentor.academicLevel >= mentee.mentee.grade
-    return mentor.age >= mentee.age + 10
+    elif mentoring_type in [MentoringType.CAREER_GUIDANCE, MentoringType.COLLEGE_GUIDANCE]:
+        return is_age_bracket_appropriate(mentor.ageBracket, mentee.ageBracket)
+    return True
 
-def match_mentoring_type(mentor, mentee):
-    return any(mentoring_type.type in [s.type for s in mentee.mentee.sessionType] for mentoring_type in mentor.mentor.sessionType)
+def is_age_bracket_appropriate(mentor_age_bracket, mentee_age_bracket):
+    age_brackets = [
+        AgeBracket.AGE_9_13,
+        AgeBracket.AGE_13_18,
+        AgeBracket.AGE_18_22,
+        AgeBracket.AGE_22_30,
+        AgeBracket.AGE_30_40,
+        AgeBracket.AGE_40_50,
+        AgeBracket.AGE_50_60,
+        AgeBracket.AGE_60_PLUS
+    ]
+    mentee_index = age_brackets.index(mentee_age_bracket)
+    return age_brackets.index(mentor_age_bracket) >= mentee_index + 2
 
 def match_ethnicity(mentor, mentee):
     if mentor.ethnicityPreference == Preference.PREFER_ONLY or mentee.ethnicityPreference == Preference.PREFER_ONLY:
@@ -34,9 +47,14 @@ def match_gender(mentor, mentee):
         return all(gender not in mentee.gender for gender in mentor.gender)
     return True
 
+def calculate_priority(mentor, mentee):
+    priority = 0
+    if match_ethnicity(mentor, mentee):
+        priority += 1
+    if match_gender(mentor, mentee):
+        priority += 1
+    return priority
 
-
-# Database connection
 client = MongoClient('mongodb://localhost:27017/')
 db = client['mentorship']
 collection = db['users']
@@ -51,6 +69,7 @@ def find_best_match(mentees, mentors):
         for mentee_session in mentee.mentee.sessionType:
             if mentee_session.is_match_found:
                 continue
+            potential_mentors = []
             for mentor in mentors:
                 if mentee.email == mentor.email:
                     continue
@@ -59,19 +78,26 @@ def find_best_match(mentees, mentors):
                     continue
                 if not is_age_appropriate(mentor, mentee, mentee_session.type):
                     continue
-                if not match_mentoring_type(mentor, mentee):
-                    continue
-                if not match_ethnicity(mentor, mentee):
-                    continue
-                if not match_gender(mentor, mentee):
-                    continue
-                mentor_location = (mentor.latitude, mentor.longitude)
-                if not is_within_distance(mentor_location, mentee_location):
-                    continue
 
+                if Method.IN_PERSON in mentee.methods or Method.HYBRID in mentee.methods:
+                    mentor_location = (mentor.latitude, mentor.longitude)
+                    if not is_within_distance(mentor_location, mentee_location):
+                        continue
+                   
+                potential_mentors.append(mentor)
+
+            best_match = None
+            highest_priority = -1
+            for mentor in potential_mentors:
+                priority = calculate_priority(mentor, mentee)
+                if priority > highest_priority:
+                    highest_priority = priority
+                    best_match = mentor    
+            
+            if best_match:
                 # Create match object using the Match model
                 match = Match(
-                    mentor_email=mentor.email,
+                    mentor_email=best_match.email,
                     mentee_email=mentee.email,
                     session_type=mentee_session.type,
                     session_name=mentee.session_name
@@ -79,11 +105,16 @@ def find_best_match(mentees, mentors):
 
                 matches.append(match)
                 mentee_session.is_match_found = True
-                mentor_session.currentMentees += 1
+                mentor.currentMentees += 1
                 updated_mentees.append(mentee)
-                updated_mentors.append(mentor)
+                updated_mentors.append(best_match)
                 matches.append(match)
                 break
+
+
+            
+
+                
 
     # Write updated mentees and mentors back to the database
     for mentee in updated_mentees:

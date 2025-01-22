@@ -77,7 +77,7 @@ def match_mentee(mentee, mentors, updated_mentors, updated_mentees):
     # Filter mentors once based on conditions like age, gender, and ethnicity
     eligible_mentors = filter_mentors(mentee, mentors)
 
-    for session_type in mentee["SessionTypes"]:
+    for session_type in mentee["MentoringTypes"]:
         if session_type["is_match_found"]:
             continue
 
@@ -85,8 +85,8 @@ def match_mentee(mentee, mentors, updated_mentors, updated_mentees):
         # Now check for matching session types from eligible mentors
         for mentor in eligible_mentors:
             print(f"Mentee {mentee['Name']} has {len(eligible_mentors)} eligible mentors")
-            print(f"Mentee {session_type["type"]} has, Mentor {mentor["SessionTypes"]} has  ")
-            if any(mentoring_type == session_type["type"] for mentoring_type in mentor["SessionTypes"]):
+            print(f"Mentee {session_type["type"]} has, Mentor {mentor["MentoringTypes"]} has  ")
+            if any(mentoring_type == session_type["type"] for mentoring_type in mentor["MentoringTypes"]):
                 best_match = mentor
                 break
         
@@ -97,7 +97,7 @@ def match_mentee(mentee, mentors, updated_mentors, updated_mentees):
                 "MenteeName": mentee["Name"],
                 "MentorEmail": best_match["Email"],
                 "MenteeEmail": mentee["Email"],
-                "SessionType": session_type["type"],
+                "MentoringType": session_type["type"],
                 "AvailabilityMentee": mentee["AvailableTimes"],
                 "AvailabilityMentor": best_match["AvailableTimes"],
                 "Frequency": "",
@@ -109,7 +109,7 @@ def match_mentee(mentee, mentors, updated_mentors, updated_mentees):
             matches_to_insert.append(match_object)
 
             # Mark the matched session type as found
-            for s_type in mentee["SessionTypes"]:
+            for s_type in mentee["MentoringTypes"]:
                 if s_type["type"] == session_type["type"]:
                     s_type["is_match_found"] = True
 
@@ -169,7 +169,7 @@ def batch_update_mentors_and_mentees(updated_mentors, updated_mentees):
     # Batch update mentees
     with mentees_table.batch_writer() as batch:
         for mentee_key in updated_mentees:
-            # Fetch mentee from database (to update SessionTypes)
+            # Fetch mentee from database (to update MentoringTypes)
             mentee = mentees_table.get_item(Key={"PK": mentee_key, "SK": "MENTEE_PROFILE"})['Item']
             print(f"Updating mentee: {mentee['Name']}")
             batch.put_item(Item=mentee)

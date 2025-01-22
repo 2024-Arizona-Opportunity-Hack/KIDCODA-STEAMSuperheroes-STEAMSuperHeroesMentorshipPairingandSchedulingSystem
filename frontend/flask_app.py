@@ -12,7 +12,6 @@ app.secret_key = os.urandom(24)
 # S3_ACCESS_KEY = ""
 # S3_SECRET_KEY = "
 # S3_REGION = "us-east-1"  # Example: 'us-east-1'
-
 # Temporary storage for OTPs
 user_otps = {}
 
