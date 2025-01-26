@@ -1,11 +1,17 @@
+from datetime import datetime
+from typing import List
 from app.db.base_class import Base
+from app.model_types.enums import SessionType, MeetingCadence, Timezone
 
 class Session(Base):
-    name: str # name of the session, should be unique
+    session_name: str # name of the session, should be unique
     description: str
-    start_time: str
-    active: bool
-    end_time: str
     location: str
-    session_type: str
-    method: str
+    timezone: Timezone
+    start_date: datetime
+    end_date: datetime
+    active: bool
+    session_type: SessionType
+    number_of_meetings: int
+    meeting_duration: List[str]
+    cadence: MeetingCadence

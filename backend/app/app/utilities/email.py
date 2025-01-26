@@ -24,7 +24,7 @@ def send_email(
     smtp_options = {"host": settings.SMTP_HOST, "port": settings.SMTP_PORT}
     if settings.SMTP_TLS:
         # https://python-emails.readthedocs.io/en/latest/
-        smtp_options["ssl"] = True
+        smtp_options["ssl"] = False
     if settings.SMTP_USER:
         smtp_options["user"] = settings.SMTP_USER
     if settings.SMTP_PASSWORD:

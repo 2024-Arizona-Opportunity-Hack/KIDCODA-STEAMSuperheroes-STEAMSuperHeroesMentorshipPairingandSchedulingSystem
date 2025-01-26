@@ -53,9 +53,25 @@ class SessionType(str, Enum):
     COLLEGE_GUIDANCE = "College guidance"
     CAREER_GUIDANCE = "Career guidance"
     EXPLORE_FIELD = "Explore a particular field"
+    OTHER = "Other"
 
 class Method(str, Enum):
     WEB_CONFERENCE = "Web conference (ie. Zoom video conference)"
     IN_PERSON = "In person"
     HYBRID = "Hybrid (both web and in person)"
     OTHER = "Other:"
+
+class MeetingCadence(str, Enum):
+    WEEKLY = "Weekly"
+    BIWEEKLY = "Bi-weekly"
+    MONTHLY = "Monthly"
+    AD_HOC = "Ad Hoc"
+
+class Timezone(str, Enum):
+    MST: str = "MST"
+    CST: str = "CST"
+    EST: str = "EST"
+    PST: str = "PST"
+    AKST: str = "AKST"
+    HST: str = "HST"
+    UTC: str = "UTC"

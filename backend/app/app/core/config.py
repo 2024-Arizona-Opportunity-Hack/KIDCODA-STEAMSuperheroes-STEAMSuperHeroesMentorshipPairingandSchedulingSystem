@@ -58,7 +58,7 @@ class Settings(BaseSettings):
 
     EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
     EMAIL_TEMPLATES_DIR: str = "/app/app/email-templates/build"
-    EMAILS_ENABLED: bool = False
+    EMAILS_ENABLED: bool = True
 
     @field_validator("EMAILS_ENABLED", mode="before")
     def get_emails_enabled(cls, v: bool, info: ValidationInfo) -> bool:

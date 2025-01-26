@@ -29,14 +29,17 @@ async def create_session(*, session_in: SessionCreate, db: AgnosticDatabase = De
         session = await crud_session.create_session(db, session_in=session_in)
         return session
     except ValueError as e:
-        raise HTTPException(status_code=404, detail="A session is alearly active")
+        print(e)
+        raise HTTPException(status_code=404, detail="An error has occured")
 
 @router.put("/{session_name}")
 async def update_session(*, session_name: str, session_in: SessionUpdate, db: AgnosticDatabase = Depends(deps.get_db)):
     try:
         session = await crud_session.update_session(db, session_name=session_name, session_in=session_in)
+        return session
     except ValueError as e:
-        raise HTTPException(status_code=404, detail="Session not found")
+        print(e)
+        raise HTTPException(status_code=404, detail="An error has occured")
 
 @router.delete("/{session_name}")
 async def delete_session(*, session_name, db: AgnosticDatabase = Depends(deps.get_db)):
