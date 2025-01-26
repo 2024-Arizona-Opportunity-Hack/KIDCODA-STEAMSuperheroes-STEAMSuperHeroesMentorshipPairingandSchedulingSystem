@@ -30,7 +30,9 @@ async def create_session(*, session_in: SessionCreate, db: AgnosticDatabase = De
         return session
     except ValueError as e:
         print(e)
-        raise HTTPException(status_code=404, detail="An error has occured")
+        raise HTTPException(status_code=404, detail="A session already exists")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail= "An error has occured")
 
 @router.put("/{session_name}")
 async def update_session(*, session_name: str, session_in: SessionUpdate, db: AgnosticDatabase = Depends(deps.get_db)):
