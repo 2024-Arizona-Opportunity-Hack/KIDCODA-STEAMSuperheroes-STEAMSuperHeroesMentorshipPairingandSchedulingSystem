@@ -8,6 +8,17 @@ geolocator = Nominatim(user_agent="fastapi-geopy")
 def default_availability():
     return {slot: False for slot in TimeSlot}
 
+def parse_availability_string(availability_str: str) -> Dict[TimeSlot, bool]:
+    availability = default_availability()
+    slots = availability_str.split("; ")
+    for slot in slots:
+        slot = slot.strip()
+        for time_slot in TimeSlot:
+            if time_slot.value == slot:
+                availability[time_slot] = True
+                break
+    return availability
+
 class menteeMentoringType(BaseModel):
     type: MentoringType
     is_match_found: bool
@@ -48,6 +59,7 @@ class UserPreferences(BaseModel):
     mentor: Optional[Mentor] = None
     mentee: Optional[Mentee] = None
     availability: Dict[TimeSlot, bool] = Field(default_factory=default_availability)
+    availability_str: Optional[str] = None
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     ageBracket: AgeBracket
@@ -59,7 +71,14 @@ class UserPreferences(BaseModel):
             state = values.get('state')
             if city and state:
                 location = geolocator.geocode(f"{city}, {state}, USA")
-            if location:
-                values['latitude'] = location.latitude
-                values['longitude'] = location.longitude
+                if location:
+                    values['latitude'] = location.latitude
+                    values['longitude'] = location.longitude
+        return values
+
+    @model_validator(mode='before')
+    def populate_availability(cls, values):
+        availability_str = values.get('availability_str')
+        if availability_str:
+            values['availability'] = parse_availability_string(availability_str)
         return values
