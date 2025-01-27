@@ -63,7 +63,7 @@ class Method(str, Enum):
 
 class MeetingCadence(str, Enum):
     WEEKLY = "Weekly"
-    BIWEEKLY = "Bi-weekly"
+    BIWEEKLY = "Bi-Weekly"
     MONTHLY = "Monthly"
     AD_HOC = "Ad Hoc"
 
