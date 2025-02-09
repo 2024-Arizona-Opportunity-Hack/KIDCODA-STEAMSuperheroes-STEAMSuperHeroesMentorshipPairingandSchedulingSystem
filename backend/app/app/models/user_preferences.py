@@ -1,22 +1,15 @@
-from pydantic import BaseModel, EmailStr, Field, model_validator
+from pydantic import BaseModel, EmailStr, model_validator
+from odmantic import Field, Model
 from typing import List, Optional, Dict
 from geopy.geocoders import Nominatim
-from model_types.enums import Grade, Preference, Ethnicity, Gender, MentoringType, Method, TimeSlot, AgeBracket
+from app.model_types.enums import Grade, Preference, Ethnicity, Gender, MentoringType, Method, TimeSlot, AgeBracket
+from app.db.base_class import Base
 
 geolocator = Nominatim(user_agent="fastapi-geopy")
 
-def default_availability():
-    return {slot: False for slot in TimeSlot}
-
-def parse_availability_string(availability_str: str) -> Dict[TimeSlot, bool]:
-    availability = default_availability()
+def parse_availability_string(availability_str: str) -> List[TimeSlot]:
     slots = availability_str.split("; ")
-    for slot in slots:
-        slot = slot.strip()
-        for time_slot in TimeSlot:
-            if time_slot.value == slot:
-                availability[time_slot] = True
-                break
+    availability = [TimeSlot(slot.strip()) for slot in slots if slot.strip() in TimeSlot.__members__]
     return availability
 
 class menteeMentoringType(BaseModel):
@@ -41,7 +34,7 @@ class Mentee(BaseModel):
     interests: Optional[str] = None
     interestsOther: Optional[str] = None
 
-class UserPreferences(BaseModel):
+class UserPreference(Model):
     email: EmailStr
     session_name: str
     name: str
@@ -58,11 +51,12 @@ class UserPreferences(BaseModel):
     role: str
     mentor: Optional[Mentor] = None
     mentee: Optional[Mentee] = None
-    availability: Dict[TimeSlot, bool] = Field(default_factory=default_availability)
+    availability: List[TimeSlot]
     availability_str: Optional[str] = None
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     ageBracket: AgeBracket
+
 
     @model_validator(mode='before')
     def calculate_coordinates(cls, values):

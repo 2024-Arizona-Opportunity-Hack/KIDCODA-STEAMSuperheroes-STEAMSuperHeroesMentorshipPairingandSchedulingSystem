@@ -14,7 +14,6 @@ class UserPreferenceCreate(BaseModel):
     ethnicityPreference: Preference
     gender: List[Gender]
     genderPreference: Preference
-    MentoringType: List[MentoringType]
     dateOfBirth: str
     age: int
     methods: List[Method]
@@ -34,7 +33,6 @@ class UserPreferenceUpdate(BaseModel):
     dateOfBirth: str
     age: int
     genderPreference: Preference
-    MentoringType: List[MentoringType]
     methods: List[Method]
     role: str
     mentor: Mentor

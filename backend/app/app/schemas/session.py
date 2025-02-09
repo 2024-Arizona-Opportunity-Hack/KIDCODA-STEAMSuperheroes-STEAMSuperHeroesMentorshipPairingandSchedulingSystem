@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from app.model_types.enums import StatusEnum
 
 class SessionCreate(BaseModel):
     name: str
@@ -16,3 +17,5 @@ class SessionUpdate(BaseModel):
     location: str
     session_type: str
     method: str
+    pairing_status: StatusEnum
+    scheduling_status: StatusEnum

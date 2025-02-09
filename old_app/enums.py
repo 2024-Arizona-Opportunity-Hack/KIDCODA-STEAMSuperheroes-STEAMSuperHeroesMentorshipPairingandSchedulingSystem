@@ -1,5 +1,11 @@
 from enum import Enum
 
+class StatusEnum(str, Enum):
+    NOT_STARTED = "not started"
+    IN_PROGRESS = "in progress"
+    COMPLETED = "completed"
+
+
 class Grade(str, Enum):
     GRADE_5 = "5th grade"
     GRADE_6 = "6th grade"

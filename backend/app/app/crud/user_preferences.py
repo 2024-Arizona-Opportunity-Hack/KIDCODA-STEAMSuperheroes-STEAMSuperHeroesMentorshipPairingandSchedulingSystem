@@ -48,6 +48,7 @@ class CRUDUserPreference(CRUDBase[UserPreference, UserPreferenceCreate, UserPref
         
     async def update_user_preferences(self, db: AgnosticDatabase, *, email: str, session_name: str, obj_in: Union[UserPreferenceUpdate, Dict[str, Any]]) -> UserPreference: # noqa
         user_preference = await self.get_by_email_and_session_name(db, email=email, session_name=session_name)
+
         if user_preference:
             return await self.update(db, db_obj=user_preference, obj_in=obj_in)
         else:

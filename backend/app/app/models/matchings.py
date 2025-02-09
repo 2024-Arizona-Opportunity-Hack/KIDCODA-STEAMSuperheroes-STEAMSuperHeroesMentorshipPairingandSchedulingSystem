@@ -1,8 +1,11 @@
 from pydantic import BaseModel
-from model_types.enums import MentoringType
+from app.db.base_class import Base
 
-class Match(BaseModel):
+from app.model_types.enums import MentoringType
+
+
+class Match(Base):
     mentor_email: str
     mentee_email: str
-    session_type: MentoringType
+    mentoring_type: MentoringType
     session_name: str

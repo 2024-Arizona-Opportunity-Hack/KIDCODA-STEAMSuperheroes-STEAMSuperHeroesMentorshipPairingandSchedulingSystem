@@ -1,7 +1,13 @@
 from haversine import haversine, Unit
-from model_types.enums import Preference, MentoringType, Method, AgeBracket
-from pymongo import MongoClient
-from models.matchings import Match
+from app.models.matchings import Match
+from faker import Faker
+from app.model_types.enums import Ethnicity, Gender, Method, Preference, MentoringType, Grade, AgeBracket, TimeSlot, MENTORING_TYPE_VALUES, GRADE_VALUES
+from app.models.user_preferences import Mentee, Mentor
+import json
+
+fake = Faker()
+
+
 # Configuration settings
 MAX_DISTANCE = 60  # Maximum distance in miles for matching
 
@@ -55,22 +61,20 @@ def calculate_priority(mentor, mentee):
         priority += 1
     return priority
 
-client = MongoClient('mongodb://localhost:27017/')
-db = client['mentorship']
-collection = db['users']
 
-def find_best_match(mentees, mentors):
+
+def find_best_match(users):
     matches = []
     updated_mentees = []
     updated_mentors = []
 
-    for mentee in mentees:
+    for mentee in users:
         mentee_location = (mentee.latitude, mentee.longitude)
         for mentee_session in mentee.mentee.sessionType:
             if mentee_session.is_match_found:
                 continue
             potential_mentors = []
-            for mentor in mentors:
+            for mentor in users:
                 if mentee.email == mentor.email:
                     continue
                 mentor_session = next((s for s in mentor.mentor.sessionType if s.type == mentee_session.type), None)
@@ -109,19 +113,94 @@ def find_best_match(mentees, mentors):
                 updated_mentees.append(mentee)
                 updated_mentors.append(best_match)
                 matches.append(match)
-                break
+                break         
+
+    return matches, updated_mentees, updated_mentors
 
 
-            
 
-                
+def generate_random_user():
+    email = fake.email()
+    session_name = "test session"
+    name = fake.name()
+    age_bracket = fake.random_element(elements=AgeBracket)
+    phone_number = fake.phone_number()
+    city = fake.city()
+    state = fake.state()
+    ethnicities = [fake.random_element(elements=Ethnicity)]
+    ethnicity_preference = fake.random_element(elements=Preference)
+    gender = [fake.random_element(elements=Gender)]
+    menteeGrade = fake.random_element(elements=GRADE_VALUES)
+    gender_preference = fake.random_element(elements=Preference)
+    mentoring_type = [fake.random_element(elements=MENTORING_TYPE_VALUES) for _ in range(3)]
+    menteeMentoringType1 = {
+        "type": fake.random_element(elements=MENTORING_TYPE_VALUES),
+        "is_match_found": False
+    }
+    menteeMentoringType2 = {
+        "type": fake.random_element(elements=MENTORING_TYPE_VALUES),
+        "is_match_found": False
+    }
+    menteeMentoringType3 = {
+        "type": fake.random_element(elements=MENTORING_TYPE_VALUES),
+        "is_match_found": False
+    }
+    menteeMentoringTypes = [menteeMentoringType1, menteeMentoringType2, menteeMentoringType3]
+    date_of_birth = fake.date_of_birth().strftime("%Y-%m-%d")
+    age = fake.random_int(min=18, max=60)
+    methods = [fake.random_element(elements=Method)]
+    role = fake.random_element(elements=["mentor", "mentee"])
+    availability = [fake.random_element(elements=TimeSlot).value for _ in range(5)]
+    macadmiclevel = fake.random_element(elements=GRADE_VALUES)
+    
+    
+    if role == "mentor":
+        mentor = {
+            "mentoringType": mentoring_type,
+            "steamBackground": fake.job(),
+            "academicLevel": macadmiclevel,
+            "professionalTitle": fake.job(),
+            "currentEmployer": fake.company(),
+            "reasonsForMentoring": fake.sentence()
+        }
+        mentee = None
+    else:
+        mentor = None
+        mentee = {
+            "grade": menteeGrade,
+            "mentoringType": menteeMentoringTypes,
+            "reasonsForMentor": fake.sentence(),
+            "reasonsForMentorOther": fake.sentence(),
+            "interests": fake.sentence(),
+            "interestsOther": fake.sentence()
+        }
 
-    # Write updated mentees and mentors back to the database
-    for mentee in updated_mentees:
-        collection.update_one({"email": mentee["email"]}, {"$set": mentee})
+    user_preference = {
+        "email": email,
+        "session_name": session_name,
+        "name": name,
+        "ageBracket": age_bracket.value,
+        "phoneNumber": phone_number,
+        "city": city,
+        "state": state,
+        "ethnicities": [ethnicity.value for ethnicity in ethnicities],
+        "ethnicityPreference": ethnicity_preference.value,
+        "gender": [g.value for g in gender],
+        "genderPreference": gender_preference.value,
+        "dateOfBirth": date_of_birth,
+        "age": age,
+        "methods": [method.value for method in methods],
+        "role": role,
+        "mentor": mentor if mentor else None,
+        "mentee": mentee if mentee else None,
+        "availability": availability
+    }
+    return user_preference
 
-    for mentor in updated_mentors:
-        collection.update_one({"email": mentor["email"]}, {"$set": mentor})
+def add_random_users(count=2):
+    users = [generate_random_user() for _ in range(count)]
+    print(json.dumps(users))
+    return users    
 
 if __name__ == "__main__":
-    find_best_match()
+    add_random_users()

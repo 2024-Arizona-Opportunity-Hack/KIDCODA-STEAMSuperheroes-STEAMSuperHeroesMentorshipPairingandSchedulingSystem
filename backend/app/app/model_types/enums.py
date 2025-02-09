@@ -1,5 +1,11 @@
 from enum import Enum
 
+
+class StatusEnum(str, Enum):
+    NOT_STARTED = "not started"
+    IN_PROGRESS = "in progress"
+    COMPLETED = "completed"
+
 class Grade(str, Enum):
     GRADE_5 = "5th grade"
     GRADE_6 = "6th grade"
@@ -21,6 +27,29 @@ class Grade(str, Enum):
     COLLEGE_UNDERGRADUATE = "College Undergraduate"
     GRADUATE_SCHOOL = "Graduate School"
     WORKING_PROFESSIONAL = "Graduated / Working Professional"
+
+GRADE_VALUES = [
+    "5th grade",
+    "6th grade",
+    "7th grade",
+    "8th grade",
+    "9th grade",
+    "10th grade",
+    "11th grade",
+    "12th grade",
+    "College Freshman",
+    "College Sophomore",
+    "College Junior",
+    "College Senior",
+    "Graduate Student",
+    "High School Freshman",
+    "High School Sophomore",
+    "High School Junior",
+    "High School Senior",
+    "College Undergraduate",
+    "Graduate School",
+    "Graduated / Working Professional"
+]
 
 class Ethnicity(str, Enum):
     SOUTH_ASIAN = "South Asian: Includes Indian, Pakistan, Sri Lankan, Bangaladesh"
@@ -54,13 +83,21 @@ class MentoringType(str, Enum):
     CAREER_GUIDANCE = "Career guidance"
     EXPLORE_FIELD = "Explore a particular field"
 
+MENTORING_TYPE_VALUES = [
+    "Homework Help",
+    "Exposure to STEAM in general",
+    "College guidance",
+    "Career guidance",
+    "Explore a particular field"
+]
+
 class Method(str, Enum):
     WEB_CONFERENCE = "Web conference (ie. Zoom video conference)"
     IN_PERSON = "In person"
     HYBRID = "Hybrid (both web and in person)"
     OTHER = "Other:"
 
-class TimeSlot(Enum):
+class TimeSlot(str, Enum):
     MONDAY_7_9_A = "Monday-7am to 9am"
     MONDAY_9_11_A = "Monday-9am to 11am"
     MONDAY_11_1_A = "Monday-11am to 1pm"
@@ -111,7 +148,7 @@ class TimeSlot(Enum):
     SUNDAY_5_7_P = "Sunday-5pm to 7pm"
     SUNDAY_7_9_P = "Sunday-7pm to 9pm"
 
-class AgeBracket(Enum):
+class AgeBracket(str, Enum):
     AGE_9_13 = "9-13"
     AGE_13_18 = "13-18"
     AGE_18_22 = "18-22"

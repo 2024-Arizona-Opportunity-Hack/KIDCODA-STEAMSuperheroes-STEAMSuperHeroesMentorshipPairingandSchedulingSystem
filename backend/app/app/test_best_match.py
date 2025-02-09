@@ -1,5 +1,5 @@
 from haversine import haversine, Unit
-from model_types.enums import Preference, MentoringType, Grade, Ethnicity, Gender, Method
+from app.model_types.enums import Preference, MentoringType, Grade, Ethnicity, Gender, Method
 from models.user_preferences import UserPreferences, Mentor, Mentee, mentorMentoringType, menteeMentoringType, TimeSlot
 
 # Configuration settings
