@@ -37,4 +37,4 @@ class UserPreferenceUpdate(BaseModel):
     role: str
     mentor: Mentor
     mentee: Mentee
-    availability: Dict
+    availability: List

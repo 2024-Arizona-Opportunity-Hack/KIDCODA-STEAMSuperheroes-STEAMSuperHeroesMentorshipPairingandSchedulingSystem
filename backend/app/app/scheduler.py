@@ -1,20 +1,13 @@
 from datetime import datetime, timedelta
 from app.model_types.enums import TimeSlot
-from models.matchings import Match
+from app.models.matchings import Match
 from pymongo import MongoClient
 from collections import defaultdict, deque
 
-client = MongoClient('mongodb://localhost:27017/')
-db = client['mentorship']
-matches_collection = db['matches']
-users_collection = db['users']
-
 def get_common_time_slots(mentor_availability, mentee_availability):
-    common_slots = []
-    for slot in TimeSlot:
-        if mentor_availability.get(slot.value, False) and mentee_availability.get(slot.value, False):
-            common_slots.append(slot)
-    return common_slots
+    # Since availability is now a list of TimeSlot enums,
+    # treat any TimeSlot that appears in both lists as available.
+    return list(set(mentor_availability) & set(mentee_availability))
 
 def bfs(pair_u, pair_v, dist, adj):
     queue = deque()
@@ -58,52 +51,33 @@ def hopcroft_karp(adj, U, V):
                     matching += 1
     return pair_u, pair_v
 
-def schedule_meetings(frequency, start_date, end_date):
-    matches = matches_collection.find({"IsActive": True})
-    scheduled_meetings = []
-
+def schedule_meetings(matches):
     adj = defaultdict(list)
     U = set()
     V = set()
+    scheduled_matches = []
 
     for match in matches:
-        mentor = users_collection.find_one({"email": match["mentor_email"]})
-        mentee = users_collection.find_one({"email": match["mentee_email"]})
-
-        mentor_availability = mentor["availability"]
-        mentee_availability = mentee["availability"]
-
-        common_slots = get_common_time_slots(mentor_availability, mentee_availability)
+        common_slots = get_common_time_slots(match.mentor_availability, match.mentee_availability)
         if not common_slots:
             continue
 
+        # For each common slot, add an edge in the bipartite graph
         for slot in common_slots:
-            adj[match["mentor_email"]].append((match["mentee_email"], slot))
-            U.add(match["mentor_email"])
-            V.add((match["mentee_email"], slot))
+            adj[match.mentor_email].append((match.mentee_email, slot))
+            U.add(match.mentor_email)
+            V.add((match.mentee_email, slot))
 
     pair_u, pair_v = hopcroft_karp(adj, U, V)
 
     for u in pair_u:
         if pair_u[u] != 0:
             mentee_email, slot = pair_u[u]
-            current_date = start_date
-            delta = timedelta(days=7) if frequency == "weekly" else timedelta(days=14) if frequency == "biweekly" else timedelta(days=30)
-            while current_date <= end_date:
-                scheduled_meetings.append({
-                    "mentor_email": u,
-                    "mentee_email": mentee_email,
-                    "session_name": match["session_name"],
-                    "meeting_time": current_date.strftime("%Y-%m-%d") + " " + slot.value
-                })
-                current_date += delta
+            # Find the original match object
+            match = next((m for m in matches if m.mentor_email == u and m.mentee_email == mentee_email), None)
+            if match:
+                match.meeting_timeslot = slot  # Update the meeting_timeslot
+                scheduled_matches.append(match)
 
-    return scheduled_meetings
+    return scheduled_matches
 
-if __name__ == "__main__":
-    start_date = datetime.now()
-    end_date = start_date + timedelta(days=90)  # Schedule for the next 3 months
-    frequency = "weekly"  # Can be "weekly", "biweekly", or "monthly"
-    meetings = schedule_meetings(frequency, start_date, end_date)
-    for meeting in meetings:
-        print(meeting)

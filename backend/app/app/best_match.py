@@ -16,12 +16,14 @@ def is_within_distance(mentor_location, mentee_location, max_distance=MAX_DISTAN
     return haversine(mentor_location, mentee_location, unit=Unit.MILES) <= max_distance
 
 def is_age_appropriate(mentor, mentee, mentoring_type):
-    if mentoring_type == MentoringType.HOMEWORK_HELP:
-        return mentor.mentor.academicLevel >= mentee.mentee.grade
-    elif mentoring_type in [MentoringType.CAREER_GUIDANCE, MentoringType.COLLEGE_GUIDANCE]:
-        return is_age_bracket_appropriate(mentor.ageBracket, mentee.ageBracket)
-    return True
-
+    if mentor.mentor.academicLevel and mentee.mentee.grade:
+        if mentoring_type == MentoringType.HOMEWORK_HELP:
+            return mentor.mentor.academicLevel >= mentee.mentee.grade
+        elif mentoring_type in [MentoringType.CAREER_GUIDANCE, MentoringType.COLLEGE_GUIDANCE]:
+            return is_age_bracket_appropriate(mentor.ageBracket, mentee.ageBracket)
+        return True
+    else:
+        return False
 def is_age_bracket_appropriate(mentor_age_bracket, mentee_age_bracket):
     age_brackets = [
         AgeBracket.AGE_9_13,
@@ -69,24 +71,28 @@ def find_best_match(users):
     updated_mentors = []
 
     for mentee in users:
-        mentee_location = (mentee.latitude, mentee.longitude)
-        for mentee_session in mentee.mentee.sessionType:
+        # mentee_location = (mentee.latitude, mentee.longitude)
+        if mentee.mentee is None:
+            continue
+        for mentee_session in mentee.mentee.mentoringType:
             if mentee_session.is_match_found:
                 continue
             potential_mentors = []
             for mentor in users:
+                if mentor.mentor is None:
+                    continue
                 if mentee.email == mentor.email:
                     continue
-                mentor_session = next((s for s in mentor.mentor.sessionType if s.type == mentee_session.type), None)
-                if mentor_session is None or mentor_session.currentMentees >= mentor_session.willingToAdvise:
-                    continue
+                mentor_session = next((s for s in mentor.mentor.mentoringType if s == mentee_session.type), None)
+                # if mentor_session is None or mentor.mentor.currentMentees >= mentor.mentor.willingToAdvise:
+                #     continue
                 if not is_age_appropriate(mentor, mentee, mentee_session.type):
                     continue
 
-                if Method.IN_PERSON in mentee.methods or Method.HYBRID in mentee.methods:
-                    mentor_location = (mentor.latitude, mentor.longitude)
-                    if not is_within_distance(mentor_location, mentee_location):
-                        continue
+                # if Method.IN_PERSON in mentee.methods or Method.HYBRID in mentee.methods:
+                #     mentor_location = (mentor.latitude, mentor.longitude)
+                #     if not is_within_distance(mentor_location, mentee_location):
+                #         continue
                    
                 potential_mentors.append(mentor)
 
@@ -103,13 +109,17 @@ def find_best_match(users):
                 match = Match(
                     mentor_email=best_match.email,
                     mentee_email=mentee.email,
-                    session_type=mentee_session.type,
-                    session_name=mentee.session_name
+                    mentoring_type=mentee_session.type,
+                    session_name=mentee.session_name,
+                    is_active=True,
+                    mentor_availability=best_match.availability,
+                    mentee_availability=mentee.availability
                 )
+                print("best match found: ", match)
 
                 matches.append(match)
                 mentee_session.is_match_found = True
-                mentor.currentMentees += 1
+                best_match.mentor.currentMentees += 1
                 updated_mentees.append(mentee)
                 updated_mentors.append(best_match)
                 matches.append(match)
@@ -161,7 +171,9 @@ def generate_random_user():
             "academicLevel": macadmiclevel,
             "professionalTitle": fake.job(),
             "currentEmployer": fake.company(),
-            "reasonsForMentoring": fake.sentence()
+            "reasonsForMentoring": fake.sentence(),
+            "currentMentees": 0,
+            "willingToAdvise": fake.random_int(min=1, max=5) 
         }
         mentee = None
     else:
@@ -199,7 +211,7 @@ def generate_random_user():
 
 def add_random_users(count=2):
     users = [generate_random_user() for _ in range(count)]
-    print(json.dumps(users))
+    # print(json.dumps(users))
     return users    
 
 if __name__ == "__main__":

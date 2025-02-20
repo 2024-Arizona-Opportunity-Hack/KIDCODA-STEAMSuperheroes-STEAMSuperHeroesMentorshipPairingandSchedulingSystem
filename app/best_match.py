@@ -9,14 +9,14 @@ from geopy.geocoders import Nominatim
 import uuid
 
 
-def get_coordinates(city, state):
-    location = geolocator.geocode(f"{city}, {state}, USA")
-    if location:
-        return (location.latitude, location.longitude)
-    return None
+# def get_coordinates(city, state):
+#     location = geolocator.geocode(f"{city}, {state}, USA")
+#     if location:
+#         return (location.latitude, location.longitude)
+#     return None
 
-def is_within_distance(mentor_location, mentee_location, max_distance = 60):
-    return mentor_location == mentee_location
+# def is_within_distance(mentor_location, mentee_location, max_distance = 60):
+#     return mentor_location == mentee_location
 
 def is_age_appropriate(mentor, mentee, mentoring_type):
     if mentoring_type == "homework help":
@@ -61,8 +61,8 @@ def find_best_match():
             for mentor in mentors:
                 if mentor["MenteeCount"] >= mentor["MaxMentees"]:
                     continue
-                if not is_within_distance(mentor["LocationState"], mentee["LocationState"]):
-                    continue
+                # if not is_within_distance(mentor["LocationState"], mentee["LocationState"]):
+                #     continue
 
                 if not is_age_appropriate(mentor, mentee, session_type["type"]):
                     continue

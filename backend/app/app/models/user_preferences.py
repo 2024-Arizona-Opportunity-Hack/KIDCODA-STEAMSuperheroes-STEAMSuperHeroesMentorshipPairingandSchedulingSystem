@@ -18,8 +18,8 @@ class menteeMentoringType(BaseModel):
 
 class Mentor(BaseModel):
     mentoringType: List[MentoringType]
-    willingToAdvise: Optional[int] = None
-    currentMentees: Optional[int] = None
+    willingToAdvise: int = 0
+    currentMentees: int = 0
     steamBackground: str
     academicLevel: Grade
     professionalTitle: str
@@ -58,17 +58,17 @@ class UserPreference(Model):
     ageBracket: AgeBracket
 
 
-    @model_validator(mode='before')
-    def calculate_coordinates(cls, values):
-        if values.get('latitude') is None or values.get('longitude') is None:
-            city = values.get('city')
-            state = values.get('state')
-            if city and state:
-                location = geolocator.geocode(f"{city}, {state}, USA")
-                if location:
-                    values['latitude'] = location.latitude
-                    values['longitude'] = location.longitude
-        return values
+    # @model_validator(mode='before')
+    # def calculate_coordinates(cls, values):
+    #     if values.get('latitude') is None or values.get('longitude') is None:
+    #         city = values.get('city')
+    #         state = values.get('state')
+    #         if city and state:
+    #             location = geolocator.geocode(f"{city}, {state}, USA")
+    #             if location:
+    #                 values['latitude'] = location.latitude
+    #                 values['longitude'] = location.longitude
+    #     return values
 
     @model_validator(mode='before')
     def populate_availability(cls, values):
