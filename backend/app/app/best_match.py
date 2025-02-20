@@ -84,8 +84,8 @@ def find_best_match(users):
                 if mentee.email == mentor.email:
                     continue
                 mentor_session = next((s for s in mentor.mentor.mentoringType if s == mentee_session.type), None)
-                # if mentor_session is None or mentor.mentor.currentMentees >= mentor.mentor.willingToAdvise:
-                #     continue
+                if mentor_session is None or mentor.mentor.currentMentees >= mentor.mentor.willingToAdvise:
+                    continue
                 if not is_age_appropriate(mentor, mentee, mentee_session.type):
                     continue
 
