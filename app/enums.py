@@ -1,5 +1,11 @@
 from enum import Enum
 
+class StatusEnum(str, Enum):
+    NOT_STARTED = "not started"
+    IN_PROGRESS = "in progress"
+    COMPLETED = "completed"
+
+
 class Grade(str, Enum):
     GRADE_5 = "5th grade"
     GRADE_6 = "6th grade"
@@ -47,7 +53,7 @@ class Gender(str, Enum):
     PREFER_NOT_DISCLOSE = "Prefer not to disclose"
     OTHERS = "Others"
 
-class SessionType(str, Enum):
+class MentoringType(str, Enum):
     HOMEWORK_HELP = "Homework Help"
     EXPOSURE_STEAM = "Exposure to STEAM in general"
     COLLEGE_GUIDANCE = "College guidance"

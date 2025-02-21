@@ -43,6 +43,8 @@ dependencies = [
   "argon2-cffi-bindings==21.2.0",
   "odmantic>=1.0,<2.0",
   "geopy",
+  "haversine",
+  "faker",
 ]
 
 [project.optional-dependencies]

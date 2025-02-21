@@ -117,7 +117,7 @@ def insert_mentor(user_data):
         "MaxMentees": int(user_data["NumberOfMentees"]),
         "MenteeCount": 0,
         "AvailableTimes": user_data["AvailableTimes"],
-        "SessionTypes": user_data["SessionTypes"],
+        "MentoringTypes": user_data["MentoringTypes"],
         "Email": user_data["Email"],
         "Age": get_age_average(user_data["Age"]),
         "Gender": map_gender(user_data["Gender"]),
@@ -143,7 +143,7 @@ def insert_mentee(user_data):
         "PK": user_data["PK"],
         "SK": "MENTEE_PROFILE",
         "AvailableTimes": user_data["AvailableTimes"],
-        "SessionTypes": user_data["SessionTypes"],
+        "MentoringTypes": user_data["MentoringTypes"],
         "Email": user_data["Email"],
         "Age": get_age_average(user_data["Age"]),
         "Gender": map_gender(user_data["Gender"]),
@@ -196,7 +196,7 @@ def lambda_handler(event, context):
                 "PhoneNumber": row["Phone Number"],
                 "LocationCity": row["Location: City"],
                 "LocationState": row["Location: State"],
-                "SessionTypes": session_types,  # Insert transformed session types here
+                "MentoringTypes": session_types,  # Insert transformed session types here
                 "Ethnicity": row["Ethnicity"],
                 "EthnicityPref": row["What is your preference in being matched with a person of the same ethnicity?"],
                 "Gender": row["Gender"],

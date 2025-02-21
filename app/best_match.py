@@ -8,24 +8,15 @@ from geopy.distance import geodesic
 from geopy.geocoders import Nominatim
 import uuid
 
-dynamodb = boto3.resource('dynamodb', region_name='us-west-2')  # Specify your region
 
+# def get_coordinates(city, state):
+#     location = geolocator.geocode(f"{city}, {state}, USA")
+#     if location:
+#         return (location.latitude, location.longitude)
+#     return None
 
-mentors_table = dynamodb.Table('Mentors')
-mentees_table = dynamodb.Table('Mentees')
-matches_table = dynamodb.Table('Pairings')
-geolocator = Nominatim(user_agent="geoapi")
-
-
-
-def get_coordinates(city, state):
-    location = geolocator.geocode(f"{city}, {state}, USA")
-    if location:
-        return (location.latitude, location.longitude)
-    return None
-
-def is_within_distance(mentor_location, mentee_location, max_distance=60):
-    return mentor_location == mentee_location
+# def is_within_distance(mentor_location, mentee_location, max_distance = 60):
+#     return mentor_location == mentee_location
 
 def is_age_appropriate(mentor, mentee, mentoring_type):
     if mentoring_type == "homework help":
@@ -62,7 +53,7 @@ def find_best_match():
 
     for mentee in mentees:
 
-        for session_type in mentee["SessionTypes"]:
+        for session_type in mentee["MentoringTypes"]:
             if session_type["is_match_found"]:
                 continue
             
@@ -70,11 +61,8 @@ def find_best_match():
             for mentor in mentors:
                 if mentor["MenteeCount"] >= mentor["MaxMentees"]:
                     continue
-
-    
-
-                if not is_within_distance(mentor["LocationState"], mentee["LocationState"]):
-                    continue
+                # if not is_within_distance(mentor["LocationState"], mentee["LocationState"]):
+                #     continue
 
                 if not is_age_appropriate(mentor, mentee, session_type["type"]):
                     continue
@@ -98,7 +86,7 @@ def find_best_match():
                     "MenteeName": mentee["Name"],
                     "MentorEmail": best_match["Email"],
                     "MenteeEmail": mentee["Email"],
-                    "SessionType": session_type["type"],
+                    "MentoringType": session_type["type"],
                     "AvailabilityMentee": mentee["AvailableTimes"],
                     "AvailabilityMentor": best_match["AvailableTimes"],
                     "Frequency": "",  # Can be filled later
@@ -109,7 +97,7 @@ def find_best_match():
 
                 insert_match(match_object)
 
-                for s_type in mentee["SessionTypes"]:
+                for s_type in mentee["MentoringTypes"]:
                     if s_type["type"] == session_type["type"]:
                         s_type["is_match_found"] = True
                 update_mentee_session(mentee)
@@ -130,8 +118,8 @@ def update_mentee_session(mentee):
     try:
         mentees_table.update_item(
             Key={"PK": mentee["PK"], "SK": mentee["SK"]},
-            UpdateExpression="SET SessionTypes = :new_sessions",
-            ExpressionAttributeValues={":new_sessions": mentee["SessionTypes"]}
+            UpdateExpression="SET MentoringTypes = :new_sessions",
+            ExpressionAttributeValues={":new_sessions": mentee["MentoringTypes"]}
         )
         print(f"Updated mentee session for {mentee['Name']}")
     except Exception as e:
@@ -149,8 +137,6 @@ def update_mentor_mentee_count(mentor):
         print(f"Failed to update mentor mentee count: {e}")
 
 
-
-def lambda_handler(event, context):
-    print("Started inserting dummy data!")
+if __name__ == "__main__":
     find_best_match()
 

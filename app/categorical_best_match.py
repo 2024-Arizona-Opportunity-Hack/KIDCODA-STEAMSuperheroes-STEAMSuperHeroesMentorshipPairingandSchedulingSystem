@@ -61,7 +61,7 @@ def find_best_match():
 
     for mentee in mentees:
 
-        for session_type in mentee["SessionTypes"]:
+        for session_type in mentee["MentoringTypes"]:
             if session_type["is_match_found"]:
                 continue
             
@@ -84,7 +84,7 @@ def find_best_match():
                 if not match_gender(mentor, mentee):
                     continue
                 
-                if any(mentoring_type == session_type["type"] for mentoring_type in mentor["SessionTypes"]):
+                if any(mentoring_type == session_type["type"] for mentoring_type in mentor["MentoringTypes"]):
                     best_match = mentor
                     break
 
@@ -97,7 +97,7 @@ def find_best_match():
                     "MenteeName": mentee["Name"],
                     "MentorEmail": best_match["Email"],
                     "MenteeEmail": mentee["Email"],
-                    "SessionType": session_type["type"],
+                    "MentoringType": session_type["type"],
                     "AvailabilityMentee": mentee["AvailableTimes"],
                     "AvailabilityMentor": best_match["AvailableTimes"],
                     "Frequency": "",  # Can be filled later
@@ -108,7 +108,7 @@ def find_best_match():
 
                 insert_match(match_object)
 
-                for s_type in mentee["SessionTypes"]:
+                for s_type in mentee["MentoringTypes"]:
                     if s_type["type"] == session_type["type"]:
                         s_type["is_match_found"] = True
                 update_mentee_session(mentee)
@@ -129,8 +129,8 @@ def update_mentee_session(mentee):
     try:
         mentees_table.update_item(
             Key={"PK": mentee["PK"], "SK": mentee["SK"]},
-            UpdateExpression="SET SessionTypes = :new_sessions",
-            ExpressionAttributeValues={":new_sessions": mentee["SessionTypes"]}
+            UpdateExpression="SET MentoringTypes = :new_sessions",
+            ExpressionAttributeValues={":new_sessions": mentee["MentoringTypes"]}
         )
         print(f"Updated mentee session for {mentee['Name']}")
     except Exception as e:
