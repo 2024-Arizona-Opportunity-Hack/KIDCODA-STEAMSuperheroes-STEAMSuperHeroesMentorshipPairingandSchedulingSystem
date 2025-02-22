@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Optional
 from app.model_types.enums import Ethnicity, Gender, Method, Preference, MentoringType
 from app.models.user_preferences import Mentee, Mentor
 from pydantic import BaseModel
@@ -18,8 +18,8 @@ class UserPreferenceCreate(BaseModel):
     age: int
     methods: List[Method]
     role: str
-    mentor: Mentor
-    mentee: Mentee
+    mentor: Mentor | None = None
+    mentee: Mentee | None = None
     availability: List
 
 class UserPreferenceUpdate(BaseModel):
@@ -35,6 +35,6 @@ class UserPreferenceUpdate(BaseModel):
     genderPreference: Preference
     methods: List[Method]
     role: str
-    mentor: Mentor
-    mentee: Mentee
+    mentor: Mentor | None = None
+    mentee: Mentee | None = None
     availability: List

@@ -1,12 +1,10 @@
+from app.model_types.enums import Ethnicity, Gender, Method, Preference, MentoringType, AgeBracket, TimeSlot, MENTORING_TYPE_VALUES, GRADE_VALUES
 from haversine import haversine, Unit
-from app.models.matchings import Match
+from app.models.pairing import Match
 from faker import Faker
-from app.model_types.enums import Ethnicity, Gender, Method, Preference, MentoringType, Grade, AgeBracket, TimeSlot, MENTORING_TYPE_VALUES, GRADE_VALUES
-from app.models.user_preferences import Mentee, Mentor
 import json
 
 fake = Faker()
-
 
 # Configuration settings
 MAX_DISTANCE = 60  # Maximum distance in miles for matching
@@ -93,7 +91,6 @@ def find_best_match(users):
                 #     mentor_location = (mentor.latitude, mentor.longitude)
                 #     if not is_within_distance(mentor_location, mentee_location):
                 #         continue
-                   
                 potential_mentors.append(mentor)
 
             best_match = None
@@ -212,7 +209,7 @@ def generate_random_user():
 def add_random_users(count=2):
     users = [generate_random_user() for _ in range(count)]
     # print(json.dumps(users))
-    return users    
+    return users
 
 if __name__ == "__main__":
     add_random_users()

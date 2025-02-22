@@ -2,7 +2,7 @@ from app.crud.crud_session import session as crud_session
 from app.schemas.session import SessionCreate, SessionUpdate
 from fastapi import APIRouter, Depends, HTTPException
 from motor.core import AgnosticDatabase
-from app.api import deps
+from app.core import deps
 from app.model_types.enums import StatusEnum
 
 
@@ -46,20 +46,3 @@ async def delete_session(*, session_name, db: AgnosticDatabase = Depends(deps.ge
         await crud_session.remove(db, session_name=session_name)
     except ValueError as e:
         raise HTTPException(status_code=404, detail="Session not found")
-    
-@router.get("/pairing")
-async def pair_session(*, session_name: str, db: AgnosticDatabase = Depends(deps.get_db)):
-    try:
-        result = await crud_session.pairing_session(db, session_name=session_name)
-        return result
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    
-@router.get("/schedulings")
-async def schedule_session(*, session_name: str, db: AgnosticDatabase = Depends(deps.get_db)):
-    try:
-        result = await crud_session.scheduling_session(db, session_name=session_name)
-        return result
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    

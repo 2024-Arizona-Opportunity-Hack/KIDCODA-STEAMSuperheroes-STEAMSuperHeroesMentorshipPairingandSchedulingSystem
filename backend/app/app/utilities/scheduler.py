@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from app.model_types.enums import TimeSlot
-from app.models.matchings import Match
+from app.models.pairing import Match
 from pymongo import MongoClient
 from collections import defaultdict, deque
 

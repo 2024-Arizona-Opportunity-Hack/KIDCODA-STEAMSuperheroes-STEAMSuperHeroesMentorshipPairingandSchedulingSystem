@@ -20,7 +20,6 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_SECONDS: int = 60 * 30
     REFRESH_TOKEN_EXPIRE_SECONDS: int = 60 * 60 * 24 * 30
     JWT_ALGO: str = "HS512"
-    TOTP_ALGO: str = "SHA-1"
     SERVER_NAME: str
     SERVER_HOST: AnyHttpUrl
     SERVER_BOT: str = "Symona"

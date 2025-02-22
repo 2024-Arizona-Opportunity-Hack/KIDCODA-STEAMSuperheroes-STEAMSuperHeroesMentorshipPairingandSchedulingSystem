@@ -6,7 +6,7 @@ from pydantic.networks import EmailStr
 from motor.core import AgnosticDatabase
 
 from app import crud, models, schemas
-from app.api import deps
+from app.core import deps
 from app.core.config import settings
 from app.core import security
 from app.utilities import (
@@ -95,20 +95,6 @@ async def read_all_users(
     return await crud.user.get_multi(db=db, page=page)
 
 
-@router.post("/new-totp", response_model=schemas.NewTOTP)
-async def request_new_totp(
-    *,
-    current_user: models.User = Depends(deps.get_current_active_user),
-) -> Any:
-    """
-    Request new keys to enable TOTP on the user account.
-    """
-    obj_in = security.create_new_totp(label=current_user.email)
-    # Remove the secret ...
-    obj_in.secret = None
-    return obj_in
-
-
 @router.post("/toggle-state", response_model=schemas.Msg)
 async def toggle_state(
     *,
@@ -148,11 +134,3 @@ async def create_user(
     if settings.EMAILS_ENABLED and user_in.email:
         send_new_account_email(email_to=user_in.email, username=user_in.email, password=user_in.password)
     return user
-
-
-@router.get("/tester", response_model=schemas.Msg)
-async def test_endpoint() -> Any:
-    """
-    Test current endpoint.
-    """
-    return {"msg": "Message returned ok."}

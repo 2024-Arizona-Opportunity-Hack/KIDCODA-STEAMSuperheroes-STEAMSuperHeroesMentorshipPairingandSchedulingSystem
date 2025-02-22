@@ -1,7 +1,7 @@
 from app.crud.user_preferences import user_preference as pref_crud
 from fastapi import APIRouter, Depends, HTTPException
 from motor.core import AgnosticDatabase
-from app.api import deps
+from app.core import deps
 from pydantic.networks import EmailStr
 from app.schemas.user_preferences import UserPreferenceCreate, UserPreferenceUpdate
 
