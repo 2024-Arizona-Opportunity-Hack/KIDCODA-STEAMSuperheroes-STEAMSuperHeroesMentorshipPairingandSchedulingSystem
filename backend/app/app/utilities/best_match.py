@@ -1,4 +1,4 @@
-from app.model_types.enums import Ethnicity, Gender, Method, Preference, MentoringType, AgeBracket, TimeSlot, MENTORING_TYPE_VALUES, GRADE_VALUES
+from app.model_types.enums import Ethnicity, Gender, Method, Preference, MentoringType, AgeBracket, TimeSlot, GRADE_VALUES
 from haversine import haversine, Unit
 from app.models.pairing import Match
 from faker import Faker
@@ -139,17 +139,17 @@ def generate_random_user():
     gender = [fake.random_element(elements=Gender)]
     menteeGrade = fake.random_element(elements=GRADE_VALUES)
     gender_preference = fake.random_element(elements=Preference)
-    mentoring_type = [fake.random_element(elements=MENTORING_TYPE_VALUES) for _ in range(3)]
+    mentoring_type = [fake.random_element(elements=[mtype.value for mtype in MentoringType]) for _ in range(3)]
     menteeMentoringType1 = {
-        "type": fake.random_element(elements=MENTORING_TYPE_VALUES),
+        "type": fake.random_element(elements=[mtype.value for mtype in MentoringType]),
         "is_match_found": False
     }
     menteeMentoringType2 = {
-        "type": fake.random_element(elements=MENTORING_TYPE_VALUES),
+        "type": fake.random_element(elements=[mtype.value for mtype in MentoringType]),
         "is_match_found": False
     }
     menteeMentoringType3 = {
-        "type": fake.random_element(elements=MENTORING_TYPE_VALUES),
+        "type": fake.random_element(elements=[mtype.value for mtype in MentoringType]),
         "is_match_found": False
     }
     menteeMentoringTypes = [menteeMentoringType1, menteeMentoringType2, menteeMentoringType3]

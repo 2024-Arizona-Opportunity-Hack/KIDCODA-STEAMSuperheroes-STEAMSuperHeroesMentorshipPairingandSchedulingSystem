@@ -1,6 +1,5 @@
 from enum import Enum
 
-
 class StatusEnum(str, Enum):
     NOT_STARTED = "not started"
     IN_PROGRESS = "in progress"
@@ -82,14 +81,6 @@ class MentoringType(str, Enum):
     COLLEGE_GUIDANCE = "College guidance"
     CAREER_GUIDANCE = "Career guidance"
     EXPLORE_FIELD = "Explore a particular field"
-
-MENTORING_TYPE_VALUES = [
-    "Homework Help",
-    "Exposure to STEAM in general",
-    "College guidance",
-    "Career guidance",
-    "Explore a particular field"
-]
 
 class Method(str, Enum):
     WEB_CONFERENCE = "Web conference (ie. Zoom video conference)"

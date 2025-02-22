@@ -2,7 +2,7 @@ from app.crud.user_preferences import user_preference as pref_crud
 from fastapi import APIRouter, Depends, HTTPException
 from motor.core import AgnosticDatabase
 from app.core import deps
-from pydantic.networks import EmailStr
+from pydantic import EmailStr, ValidationError
 from app.schemas.user_preferences import UserPreferenceCreate, UserPreferenceUpdate
 
 
@@ -30,11 +30,23 @@ async def upsert_user_preferences(*, user_preference_in: UserPreferenceCreate, d
     """
     Create new user preferences.
     """
-    # try:
-    user_preferences = await pref_crud.upsert(db, obj_in=user_preference_in)
-    # except Exception as e:
-    #     raise HTTPException(status_code=400, detail="No session is currently active")
-    return user_preferences
+    try:
+        validated_data = UserPreferenceCreate(**user_preference_in.model_dump())
+        user_preferences = await pref_crud.upsert(db, obj_in=validated_data)
+        return user_preferences
+    except ValidationError as e:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "message": "Validation error",
+                "errors": e.errors()
+            }
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=400,
+            detail=str(e)
+        )
 
 @router.delete("/", dependencies=[Depends(deps.get_current_active_superuser)])
 async def delete_user_preferences(*, email: EmailStr, session_name: str, db: AgnosticDatabase = Depends(deps.get_db)):
