@@ -95,6 +95,7 @@ def find_best_match(users):
 
             best_match = None
             highest_priority = -1
+
             for mentor in potential_mentors:
                 priority = calculate_priority(mentor, mentee)
                 if priority > highest_priority:
@@ -112,17 +113,18 @@ def find_best_match(users):
                     mentor_availability=best_match.availability,
                     mentee_availability=mentee.availability
                 )
-                print("best match found: ", match)
 
-                matches.append(match)
                 mentee_session.is_match_found = True
                 best_match.mentor.currentMentees += 1
-                updated_mentees.append(mentee)
-                updated_mentors.append(best_match)
-                matches.append(match)
-                break         
 
-    return matches, updated_mentees, updated_mentors
+                matches.append(match)
+                if mentee not in updated_mentees:
+                    updated_mentees.append(mentee)
+                if best_match not in updated_mentors:
+                    updated_mentors.append(best_match)
+                break
+
+    return matches, list(updated_mentees), list(updated_mentors)
 
 
 

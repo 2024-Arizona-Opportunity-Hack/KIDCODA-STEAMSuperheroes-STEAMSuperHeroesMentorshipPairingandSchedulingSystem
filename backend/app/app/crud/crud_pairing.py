@@ -1,3 +1,4 @@
+import asyncio
 from app.crud.base import CRUDBase
 from app.models.pairing import Match
 from app.model_types.enums import StatusEnum
@@ -14,28 +15,25 @@ class CRUDPairing(CRUDBase[Match, MatchCreate, MatchUpdate]):
         if not session:
             raise ValueError("Session not found")
         if session.pairing_status == StatusEnum.NOT_STARTED:
-            # TODO: Move this to a single transaction
-            await crud_session.update_session(db, session_name=session.name, session_in={"pairing_status": StatusEnum.IN_PROGRESS})
-            try:
-                users = await self.engine.find(UserPreference, UserPreference.session_name == session.name)
-                matches, updated_mentees, updated_mentors = find_best_match(list(users))
-                for mentee in updated_mentees:
-                    await self.engine.save(mentee)
-
-                for mentor in updated_mentors:
-                    await self.engine.save(mentor)
-
-                for match in matches:
-                    await self.engine.save(match)
-
-            except Exception as e:
-                print(str(e))
-                await crud_session.update_session(db, session_name=session.name, session_in={"pairing_status": StatusEnum.NOT_STARTED})
-                raise ValueError("Pairing failed")
-            await crud_session.update_session(db, session_name=session.name, session_in={"pairing_status": StatusEnum.COMPLETED})
-
+            async with await db.client.start_session() as db_session:
+                async with db_session.start_transaction():
+                        try:
+                            await crud_session.update_session(db, session_name=session.name, session_in={"pairing_status": StatusEnum.IN_PROGRESS})
+                            users = await self.engine.find(UserPreference, UserPreference.session_name == session.name)
+                            matches, updated_mentees, updated_mentors = find_best_match(list(users))
+                            # save_operations = []
+                            for mentee in updated_mentees:
+                                await self.engine.save(mentee)
+                            for mentor in updated_mentors:
+                                await self.engine.save(mentor)
+                            for match in matches:
+                                await self.engine.save(match)
+                            await crud_session.update_session(db, session_name=session.name, session_in={"pairing_status": StatusEnum.COMPLETED})
+                        except Exception as e:
+                            print(f"Error during pairing: {str(e)}")
+                            raise ValueError("Pairing failed")
         return {"status": session.pairing_status}
-    
+
     async def get_multi_by_session_name(self, db: AgnosticDatabase, session_name: str) -> list[Match]:
         return await self.engine.find(Match, Match.session_name == session_name)
     
