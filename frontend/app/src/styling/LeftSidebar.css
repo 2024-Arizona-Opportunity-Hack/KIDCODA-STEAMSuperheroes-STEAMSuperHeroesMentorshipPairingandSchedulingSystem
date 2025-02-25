@@ -1,0 +1,199 @@
+/* src/components/LeftSidebar.css */
+
+/* General Sidebar Styles */
+.sidebar {
+    width: 250px;
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+  }
+  
+  .sidebar-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #00B3A6; /* Teal Primary */
+  }
+  
+  .sidebar-menu {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .menu-item {
+    padding: 10px 15px;
+    margin: 5px 0;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.2s, color 0.2s;
+    color: #343a40; /* Dark Text */
+  }
+  
+  .menu-item:hover {
+    background-color: #66d9cc; /* Light Teal */
+    color: #ffffff;
+  }
+  
+  .menu-item.active {
+    background-color: #00B3A6; /* Teal Primary */
+    color: #ffffff;
+  }
+  
+  /* Projects/Tools Section */
+  .sidebar-projects {
+    margin-top: 20px;
+  }
+  
+  .sidebar-projects h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #00B3A6; /* Teal Primary */
+  }
+  
+  .sidebar-projects ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .sidebar-projects li {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+    color: #343a40;
+  }
+  
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .dot.pink {
+    background-color: #ff6f91;
+  }
+  
+  .dot.green {
+    background-color: #68d391;
+  }
+  
+  /* Manage Projects/Tools Button */
+  .add-project-btn {
+    background-color: #00B3A6; /* Teal Primary */
+    color: #fff;
+    padding: 8px 12px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+  
+  .add-project-btn:hover {
+    background-color: #009688; /* Teal Dark */
+    transform: translateY(-2px);
+  }
+  
+  /* Sidebar Footer */
+  .sidebar-footer {
+    font-size: 14px;
+    margin-top: auto;
+    color: #343a40;
+  }
+  
+  .sidebar-footer p {
+    margin: 5px 0;
+    cursor: pointer;
+    color: #00B3A6; /* Teal Primary */
+    transition: color 0.2s;
+  }
+  
+  .sidebar-footer p:hover {
+    color: #009688; /* Teal Dark */
+  }
+  
+  /* Logout Button */
+  .logout-btn {
+    background-color: #00B3A6; /* Teal Primary */
+    color: #fff;
+    padding: 8px 12px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+  
+  .logout-btn:hover {
+    background-color: #009688; /* Teal Dark */
+    transform: translateY(-2px);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .sidebar {
+      width: 100%;
+      flex-direction: row;
+      overflow-x: auto;
+      align-items: center;
+      height: auto;
+      box-shadow: none;
+    }
+  
+    .sidebar-title {
+      margin-right: 20px;
+      margin-bottom: 0;
+      font-size: 20px;
+    }
+  
+    .sidebar-menu {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 10px;
+    }
+  
+    .menu-item {
+      white-space: nowrap;
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+  
+    .sidebar-projects {
+      display: none; /* Hide projects/tools on smaller screens */
+    }
+  
+    .sidebar-footer {
+      margin-top: 10px;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+  
+    .sidebar-footer p {
+      font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .sidebar-title {
+      font-size: 18px;
+    }
+  
+    .menu-item {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+  
+    .add-project-btn,
+    .logout-btn {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+  }
+  

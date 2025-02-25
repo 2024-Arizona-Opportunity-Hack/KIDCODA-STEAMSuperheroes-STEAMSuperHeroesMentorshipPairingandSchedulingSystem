@@ -1,0 +1,300 @@
+/* src/components/LoginForm.css */
+
+/* Main container */
+.login-container {
+    display: flex;
+    height: 100vh;
+    background: linear-gradient(to bottom, #1AA3B0, #FFFFFF);
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  /* Left section */
+  .login-left {
+    flex: 1;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+  }
+  
+  .logo {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #fff;
+  }
+  
+  .tagline {
+    font-size: 1.3rem;
+    text-align: center;
+    max-width: 300px;
+    color: #000000;
+  }
+  
+  /* Right section */
+  .login-right {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .form-wrapper {
+    width: 100%;
+    max-width: 400px;
+    padding: 30px 20px;
+    text-align: center;
+  }
+  
+  .form-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #1AA3B0;
+  }
+  
+  .form-subtitle {
+    font-size: 1rem;
+    color: #6c757d;
+    margin-bottom: 25px;
+  }
+  
+  /* Input fields */
+  .input-group {
+    margin-bottom: 20px;
+    text-align: left;
+  }
+  
+  .input-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+    color: #343a40;
+  }
+  
+  .input-wrapper {
+    position: relative;
+  }
+  
+  .input-field {
+    width: 100%;
+    padding: 10px 40px 10px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+  }
+  
+  .input-field:focus {
+    border-color: #1AA3B0;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 179, 166, 0.5);
+  }
+  
+  .icon {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    color: #6c757d;
+    font-size: 1.2rem;
+  }
+  
+  /* Button styles */
+  .submit-btn {
+    width: 100%;
+    padding: 12px;
+    background: #1AA3B0;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+  
+  .submit-btn:hover {
+    background: #009688;
+    transform: translateY(-2px);
+  }
+  
+  .submit-btn:active {
+    transform: translateY(0);
+  }
+  
+  /* Links and Divider */
+  .links {
+    margin: 15px 0;
+    font-size: 0.9rem;
+  }
+  
+  .links a {
+    color: #1AA3B0;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .links a:hover {
+    text-decoration: underline;
+  }
+  
+  .divider {
+    display: flex;
+    align-items: center;
+    margin: 25px 0;
+  }
+  
+  .divider hr {
+    flex: 1;
+    border: none;
+    height: 1px;
+    background: #ced4da;
+  }
+  
+  .divider span {
+    margin: 0 10px;
+    color: #6c757d;
+    font-weight: bold;
+  }
+  
+  /* Social login buttons */
+  .social-login {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  
+  .social-btn {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    background: #f8f9fa;
+    transition: background 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .social-btn:hover {
+    background: #e2e6ea;
+    border-color: #1AA3B0;
+    transform: translateY(-2px);
+  }
+  
+  .social-btn:active {
+    transform: translateY(0);
+  }
+  
+  .social-btn.facebook {
+    color: #3b5998;
+  }
+  
+  .social-btn.twitter {
+    color: #1DA1F2;
+  }
+  
+  .social-btn.google {
+    color: #DB4437;
+  }
+  
+  /* Error message styling */
+  .error-message {
+    color: #DC3545;
+    background-color: #F8D7DA;
+    border: 1px solid #F5C6CB;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 15px;
+    text-align: left;
+  }
+  
+  /* =============== Responsive Design =============== */
+  
+  /* 
+     1) Stack sections vertically
+     2) Reduce padding/font sizes
+     3) Remove left-section radius on smaller screens
+  */
+  @media (max-width: 768px) {
+    .login-container {
+      flex-direction: column;
+    }
+  
+    .login-left, .login-right {
+      width: 100%;
+      border-radius: 0;
+    }
+  
+    .login-left {
+      padding: 20px;
+    }
+  
+    .logo {
+      font-size: 2rem;
+    }
+  
+    .tagline {
+      font-size: 1.1rem;
+      max-width: 250px;
+    }
+  
+    .login-right {
+      box-shadow: none;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      padding: 20px 0;
+      align-items: flex-start;
+    }
+  
+    .form-wrapper {
+      max-width: 90%;
+      margin: 0 auto;
+    }
+  
+    .form-title {
+      font-size: 1.5rem;
+    }
+  
+    .form-subtitle {
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .logo {
+      font-size: 1.7rem;
+    }
+  
+    .tagline {
+      font-size: 1rem;
+    }
+  
+    .form-title {
+      font-size: 1.3rem;
+    }
+  
+    .input-field,
+    .submit-btn {
+      font-size: 0.9rem;
+    }
+  }
+  
+  /* Add styles for success messages */
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid #c3e6cb;
+  border-radius: 0.25rem;
+}

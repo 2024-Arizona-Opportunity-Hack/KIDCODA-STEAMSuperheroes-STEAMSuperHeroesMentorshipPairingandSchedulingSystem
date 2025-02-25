@@ -80,6 +80,10 @@ services:
       - SERVER_HOST=https://${DOMAIN?Variable not set}
       # Allow explicit env var override for tests
       - SMTP_HOST=${SMTP_HOST}
+      - CORS_ORIGINS=http://localhost:3000
+      - PORT=8000
+    ports:
+      - "8000:8000"
     build:
       context: ./backend
       dockerfile: backend.dockerfile
@@ -95,11 +99,30 @@ services:
         - traefik.constraint-label-stack=${TRAEFIK_TAG?Variable not set}
         - traefik.http.routers.${STACK_NAME?Variable not set}-backend-http.rule=PathPrefix(`/api`) || PathPrefix(`/docs`) || PathPrefix(`/redoc`)
         - traefik.http.services.${STACK_NAME?Variable not set}-backend.loadbalancer.server.port=80
+    networks:
+      - db-network
+      - app-network
+
 
   mongodb:
     image: mongo
     ports:
       - 27017:27017
+    networks:
+      - db-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    environment:
+      - API_URL=http://backend:8000
+    networks:
+      - app-network
+    depends_on:
+      - backend
 
 volumes:
   app-db-data:
@@ -108,3 +131,9 @@ networks:
   traefik-public:
     # Allow setting it to false for testing
     external: ${TRAEFIK_PUBLIC_NETWORK_IS_EXTERNAL-true}
+  app-network:
+    name: steam-superheroes-app-network
+    driver: bridge
+  db-network:
+    name: steam-superheroes-db-network
+    driver: bridge

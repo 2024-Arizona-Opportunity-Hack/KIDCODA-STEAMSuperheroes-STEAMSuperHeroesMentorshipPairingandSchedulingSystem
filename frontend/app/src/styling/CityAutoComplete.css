@@ -1,0 +1,75 @@
+/* CityAutocomplete.css */
+
+/* The wrapper is relatively positioned to anchor the dropdown */
+.autocomplete-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 400px; /* adjust as needed */
+    margin: 0 auto;
+  }
+  
+  .input-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  
+  .city-input {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    /* Give it a "select-like" appearance */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* The suggestions container simulates a dropdown menu */
+  .suggestions-list {
+    position: absolute;
+    top: calc(100% + 2px); /* just below the input */
+    left: 0;
+    width: 100%;
+  
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  
+    max-height: 200px; /* or whatever height you prefer */
+    overflow-y: auto;
+    
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    
+    /* A slight shadow to appear above other elements */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  
+    z-index: 999; /* ensures dropdown is on top */
+  }
+  
+  .suggestion-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    /* Subtle border at bottom between items */
+    border-bottom: 1px solid #eee;
+  }
+  
+  .suggestion-item:last-child {
+    /* Remove the border after the last item */
+    border-bottom: none;
+  }
+  
+  .suggestion-item:hover {
+    background-color: #f0f0f0;
+  }
+  
+  /* Display the selected info below with light styling */
+  .selected-info {
+    margin-top: 10px;
+    padding: 8px;
+    border: 1px solid #bbb;
+    background-color: #fafafa;
+    border-radius: 4px;
+  }
+  

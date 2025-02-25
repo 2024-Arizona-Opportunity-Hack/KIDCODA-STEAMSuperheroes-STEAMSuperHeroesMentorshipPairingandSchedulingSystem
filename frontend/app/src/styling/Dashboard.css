@@ -1,0 +1,643 @@
+/* src/styling/Dashboard.css */
+
+/* General */
+body {
+    font-family: "Roboto", sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fc;
+  }
+  
+  .dashboard-container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  /* Sidebar */
+  .sidebar {
+    width: 250px;
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+  }
+  
+  .sidebar-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #00B3A6; /* Teal Primary */
+  }
+  
+  .sidebar-menu {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .menu-item {
+    padding: 10px 15px;
+    margin: 5px 0;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.2s, color 0.2s;
+    color: #343a40; /* Dark text */
+  }
+  
+  .menu-item:hover {
+    background-color: #66d9cc; /* Teal Light */
+    color: #ffffff;
+  }
+  
+  .menu-item.active {
+    background-color: #00B3A6; /* Teal Primary */
+    color: #ffffff;
+  }
+  
+  .sidebar-projects {
+    margin-top: 20px;
+  }
+  
+  .sidebar-projects h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #00B3A6; /* Teal Primary */
+  }
+  
+  .sidebar-projects ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .sidebar-projects li {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+    color: #343a40;
+  }
+  
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .dot.pink {
+    background-color: #ff6f91;
+  }
+  
+  .dot.green {
+    background-color: #68d391;
+  }
+  
+  .add-project-btn {
+    background-color: #00B3A6; /* Teal Primary */
+    color: #fff;
+    padding: 8px 12px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+  
+  .add-project-btn:hover {
+    background-color: #009688; /* Teal Dark */
+    transform: translateY(-2px);
+  }
+  
+  .logout-btn {
+    background-color: #00B3A6; /* Teal Primary */
+    color: #fff;
+    padding: 8px 12px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+  
+  .logout-btn:hover {
+    background-color: #009688; /* Teal Dark */
+    transform: translateY(-2px);
+  }
+  
+  .sidebar-footer {
+    font-size: 14px;
+    margin-top: auto;
+    color: #343a40;
+  }
+  
+  .sidebar-footer p {
+    margin: 5px 0;
+    cursor: pointer;
+    color: #00B3A6; /* Teal Primary */
+    transition: color 0.2s;
+  }
+  
+  .sidebar-footer p:hover {
+    color: #009688; /* Teal Dark */
+  }
+  
+  /* Sidebar Toggle Button */
+  .sidebar-toggle {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background-color: #00B3A6;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 18px;
+    z-index: 1000;
+    display: none; /* Hidden by default, shown on small screens */
+    transition: background-color 0.2s ease;
+  }
+  
+  .sidebar-toggle:hover {
+    background-color: #009688;
+  }
+  
+  /* Main Content */
+  .main-content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: linear-gradient(to bottom right, #ffffff, #affdf8); /* Teal Gradient */
+  }
+  
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .search-bar input {
+    padding: 10px;
+    width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .header-actions {
+    display: flex;
+    align-items: center;
+  }
+  
+  .new-project-btn {
+    background-color: #00B3A6; /* Teal Primary */
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    margin-right: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+  
+  .new-project-btn:hover {
+    background-color: #009688; /* Teal Dark */
+    transform: translateY(-2px);
+  }
+  
+  .profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+  
+  /* Greeting Section */
+  .greeting-section {
+    margin-bottom: 30px;
+  }
+  
+  .greeting-section h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    color: #343a40;
+  }
+  
+  .stats {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .stats div {
+    font-size: 16px;
+    color: #555;
+  }
+  
+  .stats span {
+    margin-right: 5px;
+  }
+  
+  /* Dashboard Row */
+  .dashboard-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+  }
+  
+  /* Projects Section */
+  .projects-section {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    flex: 2; /* Takes up more space */
+    min-width: 300px; /* Ensures readability on smaller screens */
+  }
+  
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .section-header h2 {
+    font-size: 20px;
+    color: #343a40;
+  }
+  
+  .section-header button {
+    background-color: #00B3A6; /* Teal Primary */
+    color: #fff;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+  
+  .section-header button:hover {
+    background-color: #009688; /* Teal Dark */
+    transform: translateY(-2px);
+  }
+  
+  .projects-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .projects-table th,
+  .projects-table td {
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .projects-table th {
+    background-color: #f0f4ff; /* Light Teal */
+    color: #343a40;
+  }
+  
+  .status {
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 12px;
+  }
+  
+  .status.in-progress {
+    background-color: #ffc107; /* Yellow */
+  }
+  
+  .status.pending {
+    background-color: #f44336; /* Red */
+  }
+  
+  .status.completed {
+    background-color: #4caf50; /* Green */
+  }
+  
+  /* Calendar Section */
+  .calendar-section {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    flex: 1; /* Takes up less space */
+    min-width: 300px; /* Ensures readability on smaller screens */
+  }
+  
+  .calendar-container {
+    max-width: 100%;
+    margin: 0 auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 15px; /* Curved edges */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .custom-calendar {
+    border: none;
+    font-family: "Roboto", sans-serif;
+  }
+  
+  /* Override react-calendar styles to match teal theme */
+  .react-calendar {
+    width: 100%;
+    background: none;
+    border: none;
+    font-family: "Roboto", sans-serif;
+    line-height: 1.125em;
+  }
+  
+  .react-calendar__navigation button {
+    color: #00B3A6; /* Teal Primary */
+    min-width: 44px;
+    background: none;
+    font-size: 16px;
+  }
+  
+  .react-calendar__navigation button:hover {
+    color: #009688; /* Teal Dark */
+  }
+  
+  .react-calendar__month-view__weekdays {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #00B3A6; /* Teal Primary */
+  }
+  
+  .react-calendar__tile {
+    max-width: 100%;
+    padding: 10px 6.6667px;
+    background: none;
+    text-align: center;
+    line-height: 16px;
+    transition: background-color 0.3s ease;
+    color: #343a40; /* Dark text */
+  }
+  
+  .react-calendar__tile:hover {
+    background-color: #66d9cc; /* Teal Light */
+    color: #ffffff;
+  }
+  
+  .react-calendar__tile--active {
+    background-color: #00B3A6; /* Teal Primary */
+    color: #ffffff;
+  }
+  
+  .react-calendar__tile--now {
+    background: none;
+    color: #00B3A6; /* Teal Primary */
+    font-weight: bold;
+  }
+  
+  /* Highlight dates with events */
+  .react-calendar__tile.event-date {
+    background-color: #68d391; /* Accent Teal (Green) */
+    color: #ffffff;
+    position: relative;
+  }
+  
+  .react-calendar__tile.event-date::after {
+    content: "•";
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+    color: #ff6f91; /* Accent Pink */
+  }
+  
+  /* =============== Responsive Design =============== */
+  
+  /* 
+     1) Adjust dashboard-row layout
+     2) Show sidebar toggle on smaller screens
+     3) Modify font sizes and button sizes
+  */
+  @media (max-width: 768px) {
+    .dashboard-container {
+      flex-direction: column;
+    }
+  
+    /* Sidebar Adjustments */
+    .sidebar {
+      width: 100%;
+      flex-direction: row;
+      overflow-x: auto;
+      align-items: center;
+      height: auto;
+      box-shadow: none;
+    }
+  
+    .sidebar-title {
+      margin-right: 20px;
+      margin-bottom: 0;
+      font-size: 20px;
+    }
+  
+    .sidebar-menu {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 10px;
+    }
+  
+    .menu-item {
+      white-space: nowrap;
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+  
+    .sidebar-projects {
+      display: none; /* Hide projects on smaller screens */
+    }
+  
+    .sidebar-footer {
+      margin-top: 10px;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+  
+    .sidebar-footer p {
+      font-size: 14px;
+    }
+  
+    .main-content {
+      margin-top: 10px;
+      width: 100%;
+    }
+  
+    .search-bar input {
+      width: 200px;
+    }
+  
+    .new-project-btn {
+      padding: 8px 16px;
+      margin-right: 10px;
+      font-size: 12px;
+    }
+  
+    .profile img {
+      width: 30px;
+      height: 30px;
+    }
+  
+    .greeting-section h1 {
+      font-size: 24px;
+    }
+  
+    .stats {
+      gap: 10px;
+    }
+  
+    .projects-section,
+    .calendar-section {
+      padding: 10px;
+    }
+  
+    .section-header h2 {
+      font-size: 18px;
+    }
+  
+    .section-header button {
+      font-size: 12px;
+      padding: 6px 10px;
+    }
+  
+    .projects-table th,
+    .projects-table td {
+      padding: 8px;
+    }
+  
+    /* Dashboard Row Adjustments */
+    .dashboard-row {
+      flex-direction: column;
+      gap: 20px;
+    }
+  
+    /* Calendar Adjustments */
+    .calendar-container {
+      padding: 10px;
+    }
+  
+    .custom-calendar {
+      font-size: 14px;
+    }
+  
+    /* Show Sidebar Toggle Button */
+    .sidebar-toggle {
+      display: block;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .search-bar input {
+      width: 150px;
+      font-size: 0.9rem;
+    }
+  
+    .new-project-btn {
+      padding: 8px 12px;
+      font-size: 0.9rem;
+    }
+  
+    .greeting-section h1 {
+      font-size: 20px;
+    }
+  
+    .stats div {
+      font-size: 14px;
+    }
+  
+    .projects-section {
+      padding: 10px;
+    }
+  
+    .section-header h2 {
+      font-size: 16px;
+    }
+  
+    .section-header button {
+      font-size: 12px;
+      padding: 6px 10px;
+    }
+  
+    .projects-table th,
+    .projects-table td {
+      padding: 6px;
+    }
+  
+    /* Calendar Adjustments */
+    .calendar-container {
+      padding: 10px;
+    }
+  
+    .custom-calendar {
+      font-size: 12px;
+    }
+  }
+  /* Greeting Section */
+.greeting-section {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.greeting-date {
+  font-size: 14px;
+  color: #808080; /* Gray */
+  margin-bottom: 5px;
+}
+
+.greeting-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #343a40; /* Dark gray */
+  margin-bottom: 20px;
+}
+
+.greeting-stats {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  background: #f2f2f2; /* Light Gray Background */
+  padding: 10px 20px;
+  border-radius: 8px;
+  flex: 1;
+  text-align: left;
+  gap: 10px;
+}
+
+.stat-icon {
+  font-size: 20px;
+  color: #00B3A6; /* Teal */
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: bold;
+  color: #343a40; /* Dark Gray */
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #808080; /* Gray */
+}

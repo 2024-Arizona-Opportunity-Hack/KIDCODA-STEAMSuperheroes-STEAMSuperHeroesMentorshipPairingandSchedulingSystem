@@ -1,0 +1,226 @@
+/* src/components/MentorMenteeMatchings.css */
+
+.matchings-container {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+  }
+  
+  .matchings-title {
+    font-size: 28px;
+    color: #343a40;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .button {
+    background-color: #00B3A6; /* Teal Primary */
+    color: #fff;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+  
+  .controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
+  .search-input {
+    padding: 10px 15px;
+    width: 300px;
+    max-width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+  }
+  
+  .search-input:focus {
+    border-color: #00B3A6;
+    outline: none;
+  }
+  
+  .filter-select {
+    padding: 10px 15px;
+    width: 200px;
+    max-width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    background-color: #fff;
+  }
+  
+  .filter-select:focus {
+    border-color: #00B3A6;
+    outline: none;
+  }
+  
+  .table-container {
+    overflow-x: auto;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  .matchings-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .matchings-table th,
+  .matchings-table td {
+    text-align: left;
+    padding: 12px 20px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .matchings-table th {
+    background-color: #f0f4ff; /* Light Teal */
+    color: #343a40;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+  }
+  
+  .matchings-table th:hover {
+    background-color: #e0eaff;
+  }
+  
+  .matchings-table tr:hover {
+    background-color: #f9f9f9;
+  }
+  
+  .status {
+    padding: 6px 12px;
+    border-radius: 20px;
+    color: #fff;
+    font-size: 14px;
+    text-align: center;
+    display: inline-block;
+  }
+  
+  .status.active {
+    background-color: #4caf50; /* Green */
+  }
+  
+  .status.pending {
+    background-color: #ffc107; /* Yellow */
+    color: #343a40;
+  }
+  
+  .status.completed {
+    background-color: #f44336; /* Red */
+  }
+  
+  .no-data {
+    text-align: center;
+    padding: 20px;
+    color: #777;
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 25px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .pagination-btn {
+    padding: 10px 16px;
+    border: 1px solid #00B3A6;
+    background-color: #fff;
+    color: #00B3A6;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .pagination-btn:hover:not(:disabled) {
+    background-color: #00B3A6;
+    color: #fff;
+  }
+  
+  .pagination-btn:disabled {
+    background-color: #eee;
+    color: #aaa;
+    border-color: #eee;
+    cursor: not-allowed;
+  }
+  
+  .pagination-btn.active {
+    background-color: #00B3A6;
+    color: #fff;
+  }
+  
+  @media (max-width: 768px) {
+    .controls {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  
+    .search-input,
+    .filter-select {
+      width: 100%;
+    }
+  
+    .matchings-title {
+      font-size: 24px;
+    }
+  
+    .matchings-table th,
+    .matchings-table td {
+      padding: 10px 15px;
+      font-size: 14px;
+    }
+  
+    .status {
+      font-size: 12px;
+      padding: 5px 10px;
+    }
+  
+    .pagination-btn {
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .matchings-title {
+      font-size: 20px;
+    }
+  
+    .matchings-table th,
+    .matchings-table td {
+      padding: 8px 10px;
+      font-size: 12px;
+    }
+  
+    .controls {
+      gap: 10px;
+    }
+  
+    .search-input,
+    .filter-select {
+      font-size: 14px;
+    }
+  
+    .pagination-btn {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+  }
+  
