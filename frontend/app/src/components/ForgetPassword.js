@@ -19,7 +19,7 @@ const ForgotPasswordForm = () => {
 
     try {
       // We'll call POST /recover/{email}
-      const response = await fetch(`http://localhost/api/v1/login/recover/${encodeURIComponent(email)}`, {
+      const response = await fetch(`/api/v1/login/recover/${encodeURIComponent(email)}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

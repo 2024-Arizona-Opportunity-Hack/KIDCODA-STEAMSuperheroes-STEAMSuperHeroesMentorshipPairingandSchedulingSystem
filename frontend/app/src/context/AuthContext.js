@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (inputUsername, password) => {
     try {
       // This is a legacy example. If you're using LoginForm for fetch, you might not need this.
-      const response = await fetch("http://127.0.0.1:8000/api/login", {
+      const response = await fetch("/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -5,9 +5,9 @@ from app.model_types.enums import StatusEnum
 class Session(Base):
     name: str # should be unique
     description: str
-    start_time: datetime
+    start_time: datetime  # Changed from date to datetime
     active: bool
-    end_time: datetime
+    end_time: datetime    # Changed from date to datetime
     location: str
     session_type: str
     method: str

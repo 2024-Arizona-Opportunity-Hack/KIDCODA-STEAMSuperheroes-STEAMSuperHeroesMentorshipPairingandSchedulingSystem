@@ -101,7 +101,7 @@ function MenteesPage() {
   useEffect(() => {
     const fetchMentees = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/admin/mentees");
+        const response = await fetch("api/admin/mentees");
         if (!response.ok) {
           throw new Error("Failed to fetch mentees");
         }
@@ -158,7 +158,7 @@ function MenteesPage() {
   const handleSaveClick = async (menteeId) => {
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/admin/mentees/${menteeId}`,
+        `/api/admin/mentees/${menteeId}`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -193,7 +193,7 @@ function MenteesPage() {
     if (!window.confirm(`Are you sure to delete ${mentee.name}?`)) return;
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/admin/mentees/${mentee.mentee_id}`,
+        `/api/admin/mentees/${mentee.mentee_id}`,
         { method: "DELETE" }
       );
       if (!response.ok) throw new Error("Failed to delete mentee");

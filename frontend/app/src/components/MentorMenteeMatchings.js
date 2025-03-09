@@ -22,7 +22,7 @@ const MentorMenteeMatchings = () => {
     const fetchMatchings = async () => {
       try {
         console.log("Attempting to fetch matchings from /api/matchings...");
-        const response = await fetch("http://127.0.0.1:8000/api/matchings");
+        const response = await fetch("/api/matchings");
         if (!response.ok) {
           throw new Error("Failed to fetch matchings.");
         }

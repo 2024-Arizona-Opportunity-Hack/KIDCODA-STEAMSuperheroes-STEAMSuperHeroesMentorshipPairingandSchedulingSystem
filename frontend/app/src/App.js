@@ -9,11 +9,10 @@ import AdminDashboard from "./components/AdminDashboard.js"; // New Admin Dashbo
 import { AuthProvider, AuthContext } from "./context/AuthContext.js";
 import MentorMenteeMatchings from "./components/MentorMenteeMatchings.js"; // New Component
 import CreateSessionPage from "./components/CreateSessionPage.js";
-import SessionsPage from "./components/SessionsPage.js";
 import MenteesPage from "./components/MenteesPage.js";
+import SessionDetails from "./components/SessionDetails.js";
 import MentorsPage from "./components/MentorsPage.js";
 import RegisterForm from "./components/RegisterForm.js"; // Import the RegisterForm
-import ViewOnlySessionsPage from "./components/ViewOnlySessionsPage.js";
 import ForgotPasswordForm from "./components/ForgetPassword.js";
 import AllUsersPage from "./components/AllUsersPage.js";
 import CityAutocomplete from "./components/CityAutoComplete.js";
@@ -28,7 +27,7 @@ const App = () => {
           <Route path="/signup" element={<RegisterForm />} /> {/* Add this line */}
           <Route path="/forgot-password" element={<ForgotPasswordForm />} />
                   {/* View Only Sessions Route */}
-        <Route path="/sessions" element={<ViewOnlySessionsPage />} />
+        <Route path="/admin/sessions/:sessionId" element={<SessionDetails />} />
         <Route path="/city-auto-complete" element={<CityAutocomplete/>}/>
 
           {/* Protected Routes */}
@@ -90,15 +89,6 @@ const App = () => {
             }
           />
 
-          {/* Sessions Page (Protected Admin Only) */}
-          <Route
-            path="/admin/sessions"
-            element={
-              <PrivateRoute adminOnly={true}>
-                <SessionsPage />
-              </PrivateRoute>
-            }
-          />
 
           <Route
             path="/admin/all-users"
