@@ -277,10 +277,10 @@ const AdminDashboard = () => {
                   <div 
                     key={session.id} 
                     className="session-card"
-                    onClick={() => handleSessionClick(session.name)}
+                    onClick={() => handleSessionClick(session.session_name)}
                   >
                     <div className="session-header">
-                      <h3>{session.name}</h3>
+                      <h3>{session.session_name}</h3>
                       <span className={`session-status ${session.active ? "active" : "inactive"}`}>
                         {session.active ? "Active" : "Inactive"}
                       </span>

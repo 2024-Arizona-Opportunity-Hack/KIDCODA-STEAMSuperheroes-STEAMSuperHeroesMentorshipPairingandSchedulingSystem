@@ -220,8 +220,8 @@ function CreateSessionPage() {
         description: sessionData.description.toString(),
         location: sessionData.sessionLocation.toString(),
         timezone: timezoneAbbreviation,
-        start_date: new Date(sessionData.sessionStart).toISOString(),
-        end_date: new Date(sessionData.sessionEnd).toISOString(),
+        start_time: sessionData.sessionStart,
+        end_time: sessionData.sessionEnd,
         active: true,
         session_type: sessionData.sessionType.toString(),
         number_of_meetings: numberOfMeetings,
@@ -322,7 +322,7 @@ function CreateSessionPage() {
 
           <label className="floating-label">
             <input
-              type="datetime-local"
+              type="date"
               name="sessionStart"
               className="floating-input"
               placeholder=" "
@@ -330,12 +330,12 @@ function CreateSessionPage() {
               onChange={handleChange}
               required
             />
-            <span className="floating-label-text">Session Start</span>
+            <span className="floating-label-text">Session Start Date</span>
           </label>
 
           <label className="floating-label">
             <input
-              type="datetime-local"
+              type="date"
               name="sessionEnd"
               className="floating-input"
               placeholder=" "
@@ -343,7 +343,7 @@ function CreateSessionPage() {
               onChange={handleChange}
               required
             />
-            <span className="floating-label-text">Session End</span>
+            <span className="floating-label-text">Session End Date</span>
           </label>
 
           <select

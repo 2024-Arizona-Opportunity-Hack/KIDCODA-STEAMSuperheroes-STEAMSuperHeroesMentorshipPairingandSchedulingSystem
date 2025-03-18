@@ -14,7 +14,7 @@ const SessionDetails = () => {
   useEffect(() => {
     const fetchSessionDetails = async () => {
       try {
-        const response = await fetch(`/api/v1/session/${sessionId}`, {
+        const response = await fetch(`/api/v1/session/?session_name=${sessionId}`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${accessToken}`

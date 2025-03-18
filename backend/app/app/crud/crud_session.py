@@ -9,7 +9,7 @@ from app.crud.user_preferences import user_preference as pref_crud
 
 class CRUDSession(CRUDBase[Session, SessionCreate, SessionUpdate]):
     async  def get_session_by_name(self, db: AgnosticDatabase, *, session_name: str) -> Session | None:
-        return await self.engine.find_one(Session, Session.name == session_name)
+        return await self.engine.find_one(Session, Session.session_name == session_name)
 
     async def get_all_sessions(self, db: AgnosticDatabase) -> list[Session]:
         return await self.engine.find(Session)
