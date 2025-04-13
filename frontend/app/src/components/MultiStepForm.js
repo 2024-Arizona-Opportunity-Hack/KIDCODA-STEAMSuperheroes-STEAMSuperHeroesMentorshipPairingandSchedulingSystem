@@ -7,16 +7,17 @@ import Section2Mentor from "./Section2Mentor";
 import Section3Mentee from "./Section3Mentee";
 import Section4 from "./Section4";
 import StepProgressBar from "./StepProgressBar";
-import { FaArrowLeft } from "react-icons/fa";
 import "../styling/Form.css";
 import { AuthContext } from "../context/AuthContext";
-import { registerMentor, registerMentee } from "../api"; // Your API functions
+import { FaArrowLeft } from "react-icons/fa";
+ 
+ 
 
 function MultiStepForm() {
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
-  const { logout } = useContext(AuthContext);
-
+  const { logout, accessToken } = useContext(AuthContext);
+ 
   /**
    * formData with numeric IDs for checkboxes/radios
    */
@@ -24,31 +25,32 @@ function MultiStepForm() {
     // ====== Section 1 fields ======
     email: "",
     name: "",
-    ageBracket: 0,
+    ageBracket: "",
     phoneNumber: "",
     city: "",
     state: "",
     ethnicities: [],
-    sessionPreferences: [],
-    ethnicityPreference: 0,
+    ethnicityPreference: "",
     gender: [],
-    genderPreference: 0,
+    genderPreference: "",
     methods: [],
-    role: "", // 'mentor' or 'mentee'
+    roles: [], // Change role to roles and initialize as empty array
 
     // ====== Section 2 (Mentor) fields ======
-    steamBackground: 0,
-    academicLevel: 0,
+    steamBackground: "",
+    academicLevel: "",
     professionalTitle: "",
     currentEmployer: "",
-    reasonsForMentoring: 0,
+    reasonsForMentoring: "",
     willingToAdvise: 1,
+    sessionPreferences: [], // Add this for mentor
 
     // ====== Section 3 (Mentee) fields ======
-    grade: 0,
-    reasonsForMentor: [],
+    grade: "",
+    mentoringType: [],
+    reasonsForMentor: "",
     reasonsForMentorOther: "",
-    interests: [],
+    interests: "",
     interestsOther: "",
 
     // ====== Section 4 ======
@@ -67,20 +69,28 @@ function MultiStepForm() {
   };
 
   const handleNextFromSection1 = () => {
-    if (formData.role === "mentor") {
+    if (formData.roles?.includes("mentor")) {
       setStep(2);
       navigate("/form/section2");
-    } else if (formData.role === "mentee") {
+    } else if (formData.roles?.includes("mentee")) {
       setStep(3);
       navigate("/form/section3");
     } else {
-      alert("Please select a role (Mentor or Mentee) in Section 1.");
+      alert("Please select at least one role (Mentor or Mentee) in Section 1.");
     }
   };
 
+  // Update the handleNextFromSection2 function to check for mentee role
   const handleNextFromSection2 = () => {
-    setStep(4);
-    navigate("/form/section4");
+    // If user is also a mentee, go to Section 3 next
+    if (formData.roles?.includes("mentee")) {
+      setStep(3);
+      navigate("/form/section3");
+    } else {
+      // Otherwise go directly to Section 4
+      setStep(4);
+      navigate("/form/section4");
+    }
   };
 
   const handleNextFromSection3 = () => {
@@ -152,147 +162,118 @@ function MultiStepForm() {
     setError(null);
 
     try {
-      let payload;
-      let isMentor = formData.role === "mentor";
-
-      if (isMentor) {
-        payload = {
-          // Basic info
-          email: formData.email,
-          name: formData.name,
-          phone_number: formData.phoneNumber,
-          city: formData.city,
-          state: formData.state,
-
-          // numeric approach
-          age_bracket: formData.ageBracket,
-          ethnicities: formData.ethnicities,
-          ethnicity_preference: formData.ethnicityPreference,
-          gender: formData.gender,
-          gender_preference: formData.genderPreference,
-          methods: formData.methods,
-          session_preferences: formData.sessionPreferences,
-          role: formData.role, // "mentor"
-
-          // mentor-specific
-          steam_background: formData.steamBackground,
-          academic_level: formData.academicLevel,
-          professional_title: formData.professionalTitle,
-          current_employer: formData.currentEmployer,
-          reasons_for_mentoring: formData.reasonsForMentoring,
-          willing_to_advise: formData.willingToAdvise,
-
-          // section4
-          availability: formData.availability,
-          unavailable_dates: formData.unavailableDates,
-
-          // Additional
-          match_pair_ids: [],
-          is_available_for_matching: true,
-          mentoring_sessions_completed: 0,
-        };
-        console.log(payload.email);
-        console.log(payload.ageBracket);
-        console.log(payload.availability);
-        console.log(payload.unavailableDates);
-
-      } else if (formData.role === "mentee") {
-        payload = {
-          // Basic info
-          email: formData.email,
-          name: formData.name,
-          phone_number: formData.phoneNumber,
-          city: formData.city,
-          state: formData.state,
-
-          // numeric approach
-          age_bracket: formData.ageBracket,
-          ethnicities: formData.ethnicities,
-          ethnicity_preference: formData.ethnicityPreference,
-          gender: formData.gender,
-          gender_preference: formData.genderPreference,
-          methods: formData.methods,
-          sessionPreferences: formData.sessionPreferences,
-          role: formData.role, // "mentee"
-
-          // mentee-specific
+      const isMentor = formData.roles?.includes("mentor");
+      const isMentee = formData.roles?.includes("mentee");
+      
+      // Create unified payload matching API schema
+      const payload = {
+        // Common fields
+        email: formData.email,
+        name: formData.name,
+        ageBracket: formData.ageBracket,
+        phoneNumber: formData.phoneNumber,
+        city: formData.city,
+        state: formData.state,
+        ethnicities: formData.ethnicities,
+        ethnicityPreference: formData.ethnicityPreference,
+        gender: formData.gender,
+        genderPreference: formData.genderPreference,
+        methods: formData.methods,
+        role: formData.roles[0], // Use the first selected role as the primary
+        dateOfBirth: new Date().toISOString().split('T')[0], // Add required date field
+        age: 0, // Add required age field
+        availability: formData.availability || [],
+        
+        // Mentor data - null if not a mentor
+        mentor: isMentor ? {
+          mentoringType: formData.sessionPreferences,
+          willingToAdvise: formData.willingToAdvise,
+          currentMentees: 0,
+          steamBackground: formData.steamBackground,
+          academicLevel: formData.academicLevel,
+          professionalTitle: formData.professionalTitle,
+          currentEmployer: formData.currentEmployer,
+          reasonsForMentoring: formData.reasonsForMentoring
+        } : null,
+        
+        // Mentee data - null if not a mentee
+        mentee: isMentee ? {
           grade: formData.grade,
-          reasons_for_mentoring: formData.reasonsForMentor,
+          mentoringType: formData.sessionPreferences.map(type => ({
+            type: type,
+            is_match_found: false
+          })),
+          reasonsForMentor: formData.reasonsForMentor,
+          reasonsForMentorOther: formData.reasonsForMentorOther || "",
           interests: formData.interests,
-          availability: formData.availability,
-          unavailableDates: formData.unavailableDates,
+          interestsOther: formData.interestsOther || ""
+        } : null
+      };
 
-          match_pair_ids: [],
-          is_available_for_matching: true,
-          mentoring_sessions_completed: 0,
-        };
+      console.log("Unified payload:", payload);
 
-        // If "Other…" reason => attach text
-        if (formData.reasonsForMentor.includes(4)) {
-          payload.reasons_for_mentoring = [
-            ...payload.reasons_for_mentoring,
-            formData.reasonsForMentorOther,
-          ];
-        } else {
-          payload.reasons_for_mentoring = [""];
-        }
+      // Download CSV with unified structure
+      downloadCSV(payload, "user_preferences_data.csv");
 
-        // If "Other…" interest => attach text
-        if (formData.interests.includes(8)) {
-          payload.interests = [
-            ...payload.interests,
-            formData.interestsOther,
-          ];
-        } else {
-          payload.interestsOther = [""];
-        }
-
-        console.log(payload.email);
-        console.log(payload.ageBracket);
-        console.log(payload.availability);
-        console.log(payload.unavailableDates);
-
-      } else {
-        throw new Error("Invalid role selected.");
-      }
-      console.log(payload);
-      // Download CSV with array fields as JSON
-      if (isMentor) {
-        downloadCSV(payload, "mentor_form_data.csv");
-      } else {
-        downloadCSV(payload, "mentee_form_data.csv");
-      }
-
-      // Then call the API
-      let response;
-      if (isMentor) {
-        try {
-          response = await registerMentor(payload);
-        } 
-        catch(err) {
-          if (err.response?.status === 422) {
-            console.error("422 Error detail:", err.response.data.detail);
+      // Call a single API endpoint for both types
+      try {
+        const response = await fetch('/api/v1/user_preferences/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          
+          // Special handling for 422 validation errors
+          if (response.status === 422) {
+            console.error("Validation error:", errorData);
+            
+            let errorMessage = "Please check the following fields:\n";
+            
+            // Handle the specific error format from your API
+            if (errorData.errors) {
+              errorData.errors.forEach(err => {
+                const field = err.loc.slice(1).join('.');
+                errorMessage += `• ${field}: ${err.msg}\n`;
+              });
+            } else if (errorData.detail?.errors) {
+              errorData.detail.errors.forEach(err => {
+                const field = err.loc.slice(1).join('.');
+                errorMessage += `• ${field}: ${err.msg}\n`;
+              });
+            } else if (errorData.message) {
+              errorMessage = `${errorData.message}`;
+            } else {
+              errorMessage = "Form data validation failed. Please check your inputs.";
+            }
+            
+            setError(errorMessage);
+            setLoading(false);
+            return; // Don't continue
           }
-          console.error(err);
+          
+          throw new Error(errorData.detail || "Error submitting form");
         }
-      } else {
-        try {
-          response = await registerMentee(payload);
-        } 
-        catch(err) {
-          if (err.response?.status === 422) {
-            console.error("422 Error detail:", err.response.data.detail);
-          }
-          console.error(err);
-        }
+        
+        const responseData = await response.json();
+        console.log("Registration successful:", responseData);
+        alert("Form submitted successfully! Your data has been uploaded.");
+        
+        // final step
+        logout();
+        navigate("/login");
+        
+      } catch (err) {
+        console.error("Error submitting form:", err);
+        setError(err.message || "An unexpected error occurred.");
+      } finally {
+        setLoading(false);
       }
-
-      console.log("Registration successful:", response.data);
-      alert("Form submitted successfully! Your data has been uploaded.");
-
-      // final step
-      logout();
-      navigate("/login");
 
     } catch (err) {
       console.error("Error submitting form:", err);
@@ -310,7 +291,7 @@ function MultiStepForm() {
       setStep(1);
       navigate("/form/section1");
     } else if (step === 4) {
-      if (formData.role === "mentor") {
+      if (formData.roles?.includes("mentor")) {
         setStep(2);
         navigate("/form/section2");
       } else {
@@ -326,18 +307,20 @@ function MultiStepForm() {
         step={step}
         totalSteps={totalSteps}
         stepLabels={stepLabels}
-        role={formData.role}
+        role={formData.roles} // Pass the whole array
       />
 
       {step > 1 && (
-        <button
-          type="button"
-          onClick={handleBack}
-          className="back-button"
-        >
-          <FaArrowLeft size={16} style={{ marginRight: "5px" }} />
-          Back
-        </button>
+        <div className="navigation-buttons">
+          <button
+            type="button"
+            onClick={handleBack}
+            className="back-button"
+          >
+            <FaArrowLeft size={16} style={{ marginRight: "5px" }} />
+            Back
+          </button>
+        </div>
       )}
 
       {error && <div className="error-message">{error}</div>}
@@ -356,7 +339,7 @@ function MultiStepForm() {
         <Route
           path="section2"
           element={
-            formData.role === "mentor" ? (
+            formData.roles?.includes("mentor") ? (
               <Section2Mentor
                 data={formData}
                 updateData={updateFormData}
@@ -370,7 +353,7 @@ function MultiStepForm() {
         <Route
           path="section3"
           element={
-            formData.role === "mentee" ? (
+            formData.roles?.includes("mentee") ? (
               <Section3Mentee
                 data={formData}
                 updateData={updateFormData}

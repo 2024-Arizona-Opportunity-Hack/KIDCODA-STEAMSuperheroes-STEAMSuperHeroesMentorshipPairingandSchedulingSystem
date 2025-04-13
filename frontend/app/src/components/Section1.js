@@ -4,16 +4,9 @@ import React, { useState, useEffect, useContext } from "react";
 import "../styling/Form.css";
 import { AuthContext } from "../context/AuthContext";
 
-// Numeric IDs for each Age Bracket
+// Age Brackets - direct strings
 const AGE_BRACKETS = [
-  { id: 1, label: "9-13" },
-  { id: 2, label: "13-18" },
-  { id: 3, label: "18-22" },
-  { id: 4, label: "22-30" },
-  { id: 5, label: "30-40" },
-  { id: 6, label: "40-50" },
-  { id: 7, label: "50-60" },
-  { id: 8, label: "60+" },
+  "9-13", "13-18", "18-22", "22-30", "30-40", "40-50", "50-60", "60+"
 ];
 
 // US States (value : label)
@@ -67,63 +60,53 @@ const US_STATES = [
   { value: "WY", label: "Wyoming" },
 ];
 
-// Numeric IDs for Ethnicity
+// Ethnicities - direct strings
 const ETHNICITIES = [
-  { id: 1, label: "American Indian or Alaska Native" },
-  { id: 2, label: "Asian: Includes Chinese, Japanese, Filipino, Korean, South Asian, and Vietnamese" },
-  { id: 3, label: "South Asian: Includes Indian, Pakistan, Sri Lankan, Bangaladesh" },
-  { id: 4, label: "Black or African American: Includes Jamaican, Nigerian, Haitian, and Ethiopian" },
-  { id: 5, label: "Hispanic or Latino: Includes Puerto Rican, Mexican, Cuban, Salvadoran, and Colombian" },
-  { id: 6, label: "Middle Eastern or North African: Includes Lebanese, Iranian, Egyptian, Moroccan, Israeli, and Palestinian" },
-  { id: 7, label: "Native Hawaiian or Pacific Islander: Includes Samoan, Guamanian, Chamorro, and Tongan" },
-  { id: 8, label: "White or European: Includes German, Irish, English, Italian, Polish, and French" },
-  { id: 9, label: "Other…" },
+  "South Asian: Includes Indian, Pakistan, Sri Lankan, Bangaladesh",
+  "Black or African American: Includes Jamaican, Nigerian, Haitian, and Ethiopian",
+  "White or European: Includes German, Irish, English, Italian, Polish, and French",
+  "Hispanic or Latino: Includes Puerto Rican, Mexican, Cuban, Salvadoran, and Colombian",
+  "Middle Eastern or North African: Includes Lebanese, Iranian, Egyptian, Moroccan, Israeli, and Palestinian",
+  "Native Hawaiian or Pacific Islander: Includes Samoan, Buamanian, Chamorro, and Tongan",
+  "American Indian or Alaska Native",
+  "Asian: Includes Chinese, Japanese, Filipino, Korean, South Asian, and Vietnamese",
+  "Other…"
 ];
 
-// Numeric IDs for Session Preferences
-const SESSION_TYPE_PREFERENCES = [
-  { id: 1, label: "Homework Help" },
-  { id: 2, label: "Exposure to STEAM in general" },
-  { id: 3, label: "College guidance" },
-  { id: 4, label: "Career guidance" },
-  { id: 5, label: "Explore a particular field" },
-  { id: 6, label: "Other: text" },
-];
-
-// Numeric IDs for Ethnicity Match Preference
+// Ethnicity Match Options - direct strings
 const ETHNICITY_MATCH_OPTIONS = [
-  { id: 1, label: "Prefer ONLY to be matched within that similarity" },
-  { id: 2, label: "Prefer it, but available to others as needed" },
-  { id: 3, label: "Prefer NOT to be matched within that similarity" },
-  { id: 4, label: "Do not have a preference. Either is fine." },
-  { id: 5, label: "Other…" },
+  "Prefer ONLY to be matched within that similarity",
+  "Prefer it, but available to others as needed",
+  "Prefer NOT to be matched within that similarity",
+  "Do not have a preference. Either is fine.",
+  "Other…"
 ];
 
-// Numeric IDs for Gender
+// Gender Options - direct strings
 const GENDER_OPTIONS = [
-  { id: 1, label: "Cisgender Male" },
-  { id: 2, label: "Cisgender Female" },
-  { id: 3, label: "Transgender Male" },
-  { id: 4, label: "Transgender Female" },
-  { id: 5, label: "Prefer not to disclose" },
-  { id: 6, label: "Other…" },
+  "Cisgender Male",
+  "Cisgender Female", 
+  "Transgender Male",
+  "Transgender Female",
+  "Prefer not to disclose",
+  "Other…"
 ];
 
-// Numeric IDs for Gender Preference
+// Gender Match Options - direct strings
 const GENDER_MATCH_OPTIONS = [
-  { id: 1, label: "Prefer ONLY to be matched within that similarity" },
-  { id: 2, label: "Prefer it, but available to others as needed" },
-  { id: 3, label: "Prefer NOT to be matched within that similarity" },
-  { id: 4, label: "Do not have a preference. Either is fine." },
-  { id: 5, label: "Other…" },
+  "Prefer ONLY to be matched within that similarity",
+  "Prefer it, but available to others as needed",
+  "Prefer NOT to be matched within that similarity",
+  "Do not have a preference. Either is fine.",
+  "Other…"
 ];
 
-// Numeric IDs for Methods
+// Method Options - direct strings
 const METHOD_OPTIONS = [
-  { id: 1, label: "Web Conference (i.e. Zoom Conference)" },
-  { id: 2, label: "In Person" },
-  { id: 3, label: "Hybrid (Both In Person and web)" },
-  { id: 4, label: "Other..." },
+  "Web conference (ie. Zoom video conference)",  // Changed from "Web Conference"
+  "In person",                                   // Changed from "In Person" 
+  "Hybrid (both web and in person)",             // Changed from "Hybrid (Both In Person and web)"
+  "Other:"                                       // Changed from "Other..."
 ];
 
 
@@ -169,22 +152,34 @@ function Section1({ data, updateData, onNext }) {
     updateData({ [name]: value });
   };
 
-  // For numeric radio fields
-  const handleRadioNumeric = (e) => {
+  // For radio fields (string values)
+  const handleRadio = (e) => {
     const { name, value } = e.target;
-    updateData({ [name]: parseInt(value, 10) });
+    updateData({ [name]: value });
   };
 
-  // For numeric checkbox fields
-  const handleCheckboxNumeric = (e, fieldName) => {
+  // For checkbox fields (string values)
+  const handleCheckbox = (e, fieldName) => {
     const { value, checked } = e.target;
-    const numericVal = parseInt(value, 10);
 
     if (checked) {
-      updateData({ [fieldName]: [...data[fieldName], numericVal] });
+      updateData({ [fieldName]: [...data[fieldName], value] });
     } else {
       updateData({
-        [fieldName]: data[fieldName].filter((item) => item !== numericVal),
+        [fieldName]: data[fieldName].filter(item => item !== value)
+      });
+    }
+  };
+
+  // For role checkbox fields
+  const handleRoleChange = (e) => {
+    const { value, checked } = e.target;
+
+    if (checked) {
+      updateData({ roles: [...data.roles, value] });
+    } else {
+      updateData({
+        roles: data.roles.filter((role) => role !== value),
       });
     }
   };
@@ -195,7 +190,7 @@ function Section1({ data, updateData, onNext }) {
     setErrorMsg("");
 
     // Simple email check
-    const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+    const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
     if (!emailRegex.test(data.email)) {
       setErrorMsg("Please enter a valid email address.");
       return;
@@ -243,16 +238,16 @@ function Section1({ data, updateData, onNext }) {
       <div style={{ marginBottom: "15px" }}>
         <label style={{ fontWeight: "bold" }}>Age Bracket:</label>
         <div>
-          {AGE_BRACKETS.map((item) => (
-            <label key={item.id} style={{ display: "block", marginTop: "5px" }}>
+          {AGE_BRACKETS.map((bracket) => (
+            <label key={bracket} style={{ display: "block", marginTop: "5px" }}>
               <input
                 type="radio"
                 name="ageBracket"
-                value={item.id}
-                checked={data.ageBracket === item.id}
-                onChange={handleRadioNumeric}
+                value={bracket}
+                checked={data.ageBracket === bracket}
+                onChange={handleRadio}
               />
-              {` ${item.label}`}
+              {` ${bracket}`}
             </label>
           ))}
         </div>
@@ -307,56 +302,37 @@ function Section1({ data, updateData, onNext }) {
       <div style={{ marginBottom: "15px" }}>
         <label style={{ fontWeight: "bold" }}>Ethnicities:</label>
         <div>
-          {ETHNICITIES.map((eth) => (
-            <label key={eth.id} style={{ display: "block", marginTop: "5px" }}>
+          {ETHNICITIES.map((ethnicity) => (
+            <label key={ethnicity} style={{ display: "block", marginTop: "5px" }}>
               <input
                 type="checkbox"
                 name="ethnicities"
-                value={eth.id}
-                checked={data.ethnicities.includes(eth.id)}
-                onChange={(e) => handleCheckboxNumeric(e, "ethnicities")}
+                value={ethnicity}
+                checked={data.ethnicities.includes(ethnicity)}
+                onChange={(e) => handleCheckbox(e, "ethnicities")}
               />
-              {` ${eth.label}`}
+              {` ${ethnicity}`}
             </label>
           ))}
         </div>
       </div>
 
-      {/* Session Preferences (checkbox numeric) */}
-      <div style={{ marginBottom: "15px" }}>
-        <label style={{ fontWeight: "bold" }}>Session Type Preference:</label>
-        <div>
-          {SESSION_TYPE_PREFERENCES.map((pref) => (
-            <label key={pref.id} style={{ display: "block", marginTop: "5px" }}>
-              <input
-                type="checkbox"
-                name="sessionPreferences"
-                value={pref.id}
-                checked={data.sessionPreferences.includes(pref.id)}
-                onChange={(e) => handleCheckboxNumeric(e, "sessionPreferences")}
-              />
-              {` ${pref.label}`}
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Ethnicity Matching Preference (radio numeric) */}
+      {/* Ethnicity Matching Preference (radio) */}
       <div style={{ marginBottom: "15px" }}>
         <label style={{ fontWeight: "bold" }}>
           What is your preference in being matched with a person of the same ethnicity?
         </label>
         <div>
           {ETHNICITY_MATCH_OPTIONS.map((opt) => (
-            <label key={opt.id} style={{ display: "block", marginTop: "5px" }}>
+            <label key={opt} style={{ display: "block", marginTop: "5px" }}>
               <input
                 type="radio"
                 name="ethnicityPreference"
-                value={opt.id}
-                checked={data.ethnicityPreference === opt.id}
-                onChange={handleRadioNumeric}
+                value={opt}
+                checked={data.ethnicityPreference === opt}
+                onChange={handleRadio}
               />
-              {` ${opt.label}`}
+              {` ${opt}`}
             </label>
           ))}
         </div>
@@ -366,37 +342,37 @@ function Section1({ data, updateData, onNext }) {
       <div style={{ marginBottom: "15px" }}>
         <label style={{ fontWeight: "bold" }}>Gender:</label>
         <div>
-          {GENDER_OPTIONS.map((g) => (
-            <label key={g.id} style={{ display: "block", marginTop: "5px" }}>
+          {GENDER_OPTIONS.map((g, index) => (
+            <label key={index} style={{ display: "block", marginTop: "5px" }}>
               <input
                 type="checkbox"
                 name="gender"
-                value={g.id}
-                checked={data.gender.includes(g.id)}
-                onChange={(e) => handleCheckboxNumeric(e, "gender")}
+                value={g}
+                checked={data.gender.includes(g)}
+                onChange={(e) => handleCheckbox(e, "gender")}
               />
-              {` ${g.label}`}
+              {` ${g}`}
             </label>
           ))}
         </div>
       </div>
 
-      {/* Gender Matching Preference (radio numeric) */}
+      {/* Gender Matching Preference (radio) */}
       <div style={{ marginBottom: "15px" }}>
         <label style={{ fontWeight: "bold" }}>
           What is your preference regarding being matched with a person of the same gender identity?
         </label>
         <div>
           {GENDER_MATCH_OPTIONS.map((opt) => (
-            <label key={opt.id} style={{ display: "block", marginTop: "5px" }}>
+            <label key={opt} style={{ display: "block", marginTop: "5px" }}>
               <input
                 type="radio"
                 name="genderPreference"
-                value={opt.id}
-                checked={data.genderPreference === opt.id}
-                onChange={handleRadioNumeric}
+                value={opt}
+                checked={data.genderPreference === opt}
+                onChange={handleRadio}
               />
-              {` ${opt.label}`}
+              {` ${opt}`}
             </label>
           ))}
         </div>
@@ -408,46 +384,46 @@ function Section1({ data, updateData, onNext }) {
           What methods are you open to?
         </label>
         <div>
-          {METHOD_OPTIONS.map((m) => (
-            <label key={m.id} style={{ display: "block", marginTop: "5px" }}>
+          {METHOD_OPTIONS.map((m, index) => (
+            <label key={index} style={{ display: "block", marginTop: "5px" }}>
               <input
                 type="checkbox"
                 name="methods"
-                value={m.id}
-                checked={data.methods.includes(m.id)}
-                onChange={(e) => handleCheckboxNumeric(e, "methods")}
+                value={m}
+                checked={data.methods.includes(m)}
+                onChange={(e) => handleCheckbox(e, "methods")}
               />
-              {` ${m.label}`}
+              {` ${m}`}
             </label>
           ))}
         </div>
       </div>
 
-      {/* Role (radio) */}
+      {/* Role (checkbox multi-select) */}
       <div style={{ marginBottom: "15px" }}>
         <label style={{ fontWeight: "bold" }}>
-          Choose the role you're signing up for:
+          Choose your role(s) - select all that apply:
         </label>
         <div>
           <label style={{ display: "block", marginTop: "5px" }}>
             <input
-              type="radio"
+              type="checkbox"
               name="role"
               value="mentor"
-              checked={data.role === "mentor"}
-              onChange={handleChange}
+              checked={data.roles?.includes("mentor")}
+              onChange={handleRoleChange}
             />
-            {" Mentor (the person providing guidance)"}
+            {" Mentor (person providing guidance)"}
           </label>
           <label style={{ display: "block", marginTop: "5px" }}>
             <input
-              type="radio"
+              type="checkbox"
               name="role"
               value="mentee"
-              checked={data.role === "mentee"}
-              onChange={handleChange}
+              checked={data.roles?.includes("mentee")}
+              onChange={handleRoleChange}
             />
-            {" Mentee (the person receiving guidance)"}
+            {" Mentee (person receiving guidance)"}
           </label>
         </div>
       </div>

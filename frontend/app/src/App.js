@@ -71,12 +71,12 @@ const App = () => {
 
           {/* Mentors Page (Protected Admin Only) */}
           <Route
-            path="/admin/mentors"
-            element={
-              <PrivateRoute adminOnly={true}>
-                <MentorsPage />
-              </PrivateRoute>
-            }
+          path="/admin/sessions/:sessionId/participants"
+          element={
+            <PrivateRoute adminOnly={true}>
+            <MentorsPage />
+            </PrivateRoute>
+          }
           />
 
           {/* Mentees Page (Protected Admin Only) */}

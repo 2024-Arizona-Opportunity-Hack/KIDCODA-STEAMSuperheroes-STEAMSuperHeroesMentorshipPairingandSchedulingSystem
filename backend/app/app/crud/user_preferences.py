@@ -34,13 +34,13 @@ class CRUDUserPreference(CRUDBase[UserPreference, UserPreferenceCreate, UserPref
             if user_preference_obj:
                 user_preference = {
                     **obj_in.model_dump(),
-                    "session_name": session.name,
+                    "session_name": session.session_name,
                 }
                 return await self.update(db, db_obj=user_preference_obj, obj_in=user_preference)
             else:
                 user_preference = {
                     **obj_in.model_dump(),
-                    "session_name": session.name,
+                    "session_name": session.session_name,
                 }
                 return await self.engine.save(UserPreference(**user_preference))
         else:

@@ -51,7 +51,7 @@ const RegisterForm = () => {
 
     // Optional: Add more validations (e.g., email format, password strength)
     const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(email.trim())) {
       setError("Please enter a valid email address.");
       return;
     }
@@ -218,18 +218,6 @@ const RegisterForm = () => {
             <p>
               Already have an account? <Link to="/login">Sign In</Link>
             </p>
-          </div>
-
-          {/* Divider */}
-          <div className="divider">
-            <hr /> <span>OR</span> <hr />
-          </div>
-
-          {/* Social Registration Buttons (Optional) */}
-          <div className="social-login">
-            <button className="social-btn facebook">Register with Facebook</button>
-            <button className="social-btn twitter">Register with Twitter</button>
-            <button className="social-btn google">Register with Google</button>
           </div>
         </div>
       </div>

@@ -95,12 +95,27 @@ function Section4({ data, updateData, onSubmit, loading }) {
   const handleCheckboxChange = (e) => {
     const { value, checked } = e.target;
     const numericId = parseInt(value, 10);
-
+    
+    // Find the slot object to get the day and time
+    const slotObj = ALL_DAY_TIME_OPTIONS.find(slot => slot.id === numericId);
+    if (!slotObj) return;
+    
+    // Create the formatted string like "Monday-7am to 9am"
+    const formattedSlot = `${slotObj.day}-${slotObj.time}`;
+    
+    // Get current availability as an array of formatted strings
+    const currentAvailability = data.availability || [];
+    
     if (checked) {
-      updateData({ availability: [...(data.availability || []), numericId] });
+      // Add the formatted string to the availability array
+      updateData({ 
+        availability: [...currentAvailability, formattedSlot]
+      });
     } else {
+      // Remove the formatted string from the availability array
+      const newAvailability = currentAvailability.filter(slot => slot !== formattedSlot);
       updateData({
-        availability: (data.availability || []).filter((id) => id !== numericId),
+        availability: newAvailability
       });
     }
   };
@@ -123,7 +138,9 @@ function Section4({ data, updateData, onSubmit, loading }) {
       return;
     }
     setError("");
-    onSubmit(); // calls parent’s final submit
+    
+    // Submit with availability as an array
+    onSubmit();
   };
 
   // Group by day, so we can create a 7×7 table
@@ -205,8 +222,8 @@ function Section4({ data, updateData, onSubmit, loading }) {
                       <input
                         type="checkbox"
                         value={numericId}
-                        // Check if data.availability includes numericId
-                        checked={(data.availability || []).includes(numericId)}
+                        // Check if data.availability includes the formatted string
+                        checked={(data.availability || []).includes(`${slotObj.day}-${slotObj.time}`)}
                         onChange={handleCheckboxChange}
                       />
                     </td>
@@ -219,7 +236,7 @@ function Section4({ data, updateData, onSubmit, loading }) {
       </div>
 
       {/* Unavailable date ranges */}
-      <div style={{ marginTop: "20px" }}>
+      {/* <div style={{ marginTop: "20px" }}>
         <label htmlFor="unavailableDates" style={{ fontWeight: "bold" }}>
           What are specific date ranges that you are NOT available?
         </label>
@@ -240,7 +257,7 @@ function Section4({ data, updateData, onSubmit, loading }) {
           value={data.unavailableDates || ""}
           onChange={handleUnavailableDatesChange}
         />
-      </div>
+      </div> */}
 
       <button
         type="submit"

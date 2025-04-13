@@ -124,6 +124,7 @@ async def create_user(
     """
     Create new user (moderator function).
     """
+
     user = await crud.user.get_by_email(db, email=user_in.email)
     if user:
         raise HTTPException(

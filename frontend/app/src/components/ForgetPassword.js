@@ -100,11 +100,11 @@ const ForgotPasswordForm = () => {
           </div>
 
           {/* Social Login Buttons (optional) */}
-          <div className="social-login">
+          {/* <div className="social-login">
             <button className="social-btn facebook">Facebook</button>
             <button className="social-btn twitter">Twitter</button>
             <button className="social-btn google">Google</button>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

@@ -121,6 +121,18 @@ const SessionDetails = () => {
         >
           View Participants
         </button>
+        <button 
+          className="action-button participants" 
+          onClick={() => navigate(`/admin/sessions/${sessionId}/mentors`)}
+        >
+          View Mentors
+        </button>
+        <button 
+          className="action-button participants" 
+          onClick={() => navigate(`/admin/sessions/${sessionId}/mentees`)}
+        >
+          View Mentees
+        </button>
       </div>
     </div>
   );

@@ -60,9 +60,7 @@ const Dashboard = () => {
     { label: "Dashboard", active: true },
     { label: "Sessions", active: false, onClick: handleViewSessions },
     { label: "My Mentors", active: false },
-    { label: "Notes", active: false },
-    { label: "Documents", active: false },
-    { label: "Receipts", active: false },
+    { label: "My Mentees", active: false },
   ];
 
   // Define projects/tools for Mentee Dashboard
@@ -72,14 +70,14 @@ const Dashboard = () => {
       { name: "Event Planning", color: "pink" },
       { name: "Breakfast Plan", color: "green" },
     ],
-    manageButtonLabel: "New Mentor-Mentee Matching",
+    manageButtonLabel: "New Session Enrollment",
   };
 
   return (
     <div className="dashboard-container">
       {/* Sidebar */}
       <LeftSidebar
-        title="Mentee Dashboard"
+        title="Dashboard"
         menuItems={menuItems}
         projects={projects}
         onManageProjects={handleNewMatching}
@@ -134,7 +132,7 @@ const Dashboard = () => {
           </div>
           <div className="header-actions">
             <button className="new-project-btn" onClick={handleNewMatching}>
-              + New Mentor-Mentee Matching
+              + New Session Enrollment
             </button>
             <div className="profile">
               <img src="https://via.placeholder.com/30" alt="Profile" />
@@ -145,7 +143,7 @@ const Dashboard = () => {
         {/* Greeting Section */}
         <section className="greeting-section">
         <p className="greeting-date">{formattedDate}</p>
-          <h1 className="greeting-title">Welcome, Mentee!</h1>
+          <h1 className="greeting-title">Welcome!</h1>
           <div className="greeting-stats">
           <div className="stat">
               <span className="stat-icon">⏱</span>

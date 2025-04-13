@@ -2,101 +2,126 @@ import React from "react";
 import "../styling/Form.css";
 
 /**
- * Numeric-keyed grade radio options
+ * Grade options as direct strings (matching Grade enum)
  */
 const GRADE_OPTIONS = [
-  { id: 1, label: "5th grade" },
-  { id: 2, label: "6th grade" },
-  { id: 3, label: "7th grade" },
-  { id: 4, label: "8th grade" },
-  { id: 5, label: "9th grade" },
-  { id: 6, label: "10th grade" },
-  { id: 7, label: "11th grade" },
-  { id: 8, label: "12th grade" },
-  { id: 9, label: "College Freshman" },
-  { id: 10, label: "College Sophomore" },
-  { id: 11, label: "College Junior" },
-  { id: 12, label: "College Senior" },
-  { id: 13, label: "Graduate Student" },
+  "5th grade",
+  "6th grade",
+  "7th grade",
+  "8th grade",
+  "9th grade",
+  "10th grade",
+  "11th grade",
+  "12th grade",
+  "College Freshman",
+  "College Sophomore",
+  "College Junior",
+  "College Senior",
+  "Graduate Student",
+  "High School Freshman",
+  "High School Sophomore",
+  "High School Junior",
+  "High School Senior",
+  "College Undergraduate",
+  "Graduate School"
 ];
 
 /**
- * Numeric-keyed reasons for wanting a mentor (checkbox).
- * The last one "Other…" triggers a text box if selected.
+ * Reasons for wanting a mentor as direct strings
  */
 const REASONS_OPTIONS = [
-  { id: 1, label: "Career Exploration" },
-  { id: 2, label: "Do better in school" },
-  { id: 3, label: "Learn about STEAM" },
-  { id: 4, label: "Other…" }, // triggers text field
+  "Career Exploration",
+  "Do better in school",
+  "Learn about STEAM",
+  "Other"
 ];
 
 /**
- * Numeric-keyed interests (checkbox).
- * The last one "Other…" triggers a text box if selected.
+ * Interests as direct strings
  */
 const INTERESTS_OPTIONS = [
-  { id: 1, label: "Science" },
-  { id: 2, label: "Dance" },
-  { id: 3, label: "Math" },
-  { id: 4, label: "Music" },
-  { id: 5, label: "Building" },
-  { id: 6, label: "Robotics" },
-  { id: 7, label: "Art" },
-  { id: 8, label: "Other…" }, // triggers text field
+  "Science",
+  "Dance",
+  "Math",
+  "Music",
+  "Building",
+  "Robotics",
+  "Art",
+  "Other"
+];
+
+/**
+ * Session preferences/mentoring types (matching MentoringType enum)
+ */
+const SESSION_PREFERENCE_OPTIONS = [
+  "Homework Help",
+  "Exposure to STEAM in general",
+  "College guidance",
+  "Career guidance",
+  "Explore a particular field",
+  "Other"
 ];
 
 function Section3Mentee({ data, updateData, onNext }) {
   /**
-   * If it's a single radio (grade), we parseInt the value, store it in data.grade as a number.
-   * If it's a text field for "Other reason"/"Other interest", we store as string.
+   * For all text and radio inputs
    */
   const handleChange = (e) => {
-    const { name, value, type } = e.target;
+    const { name, value } = e.target;
+    updateData({ [name]: value });
+  };
 
-    // If it's a radio for numeric keys (grade), parse it to an integer:
-    if (type === "radio" && name === "grade") {
-      updateData({ [name]: parseInt(value, 10) });
+  /**
+   * For checkbox fields (reasonsForMentor, interests) - convert to comma-separated strings
+   */
+  const handleCheckbox = (e, fieldName, otherFieldName) => {
+    const { value, checked } = e.target;
+    
+    // Get current values as array
+    const currentValues = data[fieldName] 
+      ? (Array.isArray(data[fieldName]) 
+        ? data[fieldName] 
+        : data[fieldName].split(", "))
+      : [];
+
+    let newValues;
+    if (checked) {
+      // Add value to the array
+      newValues = [...currentValues, value];
     } else {
-      // Otherwise, store string as is (for text, etc.)
-      updateData({ [name]: value });
+      // Remove value from the array
+      newValues = currentValues.filter(item => item !== value);
+    }
+    
+    // Store as comma-separated string
+    updateData({ [fieldName]: newValues.join(", ") });
+
+    // If the user unchecks "Other", clear the related text field
+    if (!checked && otherFieldName && value === "Other") {
+      updateData({ [otherFieldName]: "" });
     }
   };
 
   /**
-   * For checkboxes, we store numeric IDs in arrays: data.reasonsForMentor, data.interests.
-   * If "Other…" is unchecked, clear the associated text field (reasonsForMentorOther / interestsOther).
+   * Special handler for mentoring type checkboxes to create proper objects
    */
-  const handleCheckboxChange = (e, fieldName, otherFieldName) => {
+  const handleMentoringTypeCheckbox = (e) => {
     const { value, checked } = e.target;
-    const numericVal = parseInt(value, 10);
-
+    
     if (checked) {
-      // Add numericVal to the array
-      updateData({ [fieldName]: [...data[fieldName], numericVal] });
-    } else {
-      // Remove numericVal from the array
-      updateData({
-        [fieldName]: data[fieldName].filter((item) => item !== numericVal),
+      // Add a new mentoringType object with is_match_found = false
+      const newMentoringType = {
+        type: value,
+        is_match_found: false
+      };
+      updateData({ 
+        mentoringType: [...(data.mentoringType || []), newMentoringType] 
       });
-    }
-
-    // If the user unchecks "Other…" => clear the related text field
-    // We assume "Other…" always has the highest numeric ID in the set for that field
-    // e.g., id=4 for reasons, id=8 for interests
-    if (!checked && otherFieldName) {
-      // If the user clicked "Other…", then numericVal is the ID for "Other…"
-      // Let's see if numericVal matches the last item for "Other…"
-      // For reasons, id=4 is "Other…"
-      // For interests, id=8 is "Other…"
-      const isOther = (
-        fieldName === "reasonsForMentor" && numericVal === 4
-      ) || (
-        fieldName === "interests" && numericVal === 8
-      );
-      if (isOther) {
-        updateData({ [otherFieldName]: "" });
-      }
+    } else {
+      // Remove the mentoringType object with the matching type
+      updateData({
+        mentoringType: (data.mentoringType || []).filter(item => item.type !== value)
+      });
     }
   };
 
@@ -106,58 +131,80 @@ function Section3Mentee({ data, updateData, onNext }) {
     onNext();
   };
 
-  // Helper to see if data array includes "Other…" numeric ID
-  const hasOtherReasons = data.reasonsForMentor.includes(4); // 4 is "Other…"
-  const hasOtherInterests = data.interests.includes(8);      // 8 is "Other…"
+  // Helper to check if "Other" is selected
+  const hasOtherReasons = data.reasonsForMentor?.includes("Other");
+  const hasOtherInterests = data.interests?.includes("Other");
 
   return (
     <form className="form-container" onSubmit={handleSubmit}>
       <h2 className="form-heading">Mentee Profile Questions</h2>
 
-      {/* Grade (radio numeric) */}
+      {/* Grade (direct string values) */}
       <div style={{ marginBottom: "15px" }}>
         <label style={{ fontWeight: "bold" }}>Grade:</label>
         <div>
           {GRADE_OPTIONS.map((grade) => (
             <label
-              key={grade.id}
+              key={grade}
               style={{ display: "block", marginTop: "5px" }}
             >
               <input
                 type="radio"
                 name="grade"
-                value={grade.id}
-                checked={data.grade === grade.id}
+                value={grade}
+                checked={data.grade === grade}
                 onChange={handleChange}
               />
-              {` ${grade.label}`}
+              {` ${grade}`}
             </label>
           ))}
         </div>
       </div>
 
-      {/* Reasons for Wanting a Mentor (checkbox numeric) */}
+      {/* Mentoring Type / Session Preferences (creates objects) */}
+      <div style={{ marginBottom: "15px" }}>
+        <label style={{ fontWeight: "bold" }}>What type of mentoring are you interested in?</label>
+        <div>
+          {SESSION_PREFERENCE_OPTIONS.map((option) => (
+            <label
+              key={option}
+              style={{ display: "block", marginTop: "5px" }}
+            >
+              <input
+                type="checkbox"
+                name="mentoringType"
+                value={option}
+                checked={data.mentoringType?.some(item => item.type === option)}
+                onChange={handleMentoringTypeCheckbox}
+              />
+              {` ${option}`}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* Reasons for Wanting a Mentor (as string) */}
       <div style={{ marginBottom: "15px" }}>
         <label style={{ fontWeight: "bold" }}>Reasons for Wanting a Mentor:</label>
         <div>
           {REASONS_OPTIONS.map((reason) => (
             <label
-              key={reason.id}
+              key={reason}
               style={{ display: "block", marginTop: "5px" }}
             >
               <input
                 type="checkbox"
                 name="reasonsForMentor"
-                value={reason.id}
-                checked={data.reasonsForMentor.includes(reason.id)}
-                onChange={(e) => handleCheckboxChange(e, "reasonsForMentor", "reasonsForMentorOther")}
+                value={reason}
+                checked={data.reasonsForMentor?.includes(reason)}
+                onChange={(e) => handleCheckbox(e, "reasonsForMentor", "reasonsForMentorOther")}
               />
-              {` ${reason.label}`}
+              {` ${reason}`}
             </label>
           ))}
         </div>
-        {/* If "Other…" is selected, display the text box */}
-        {hasOtherReasons && (
+        {/* If "Other" is selected, display the text box */}
+        {data.reasonsForMentor?.includes("Other") && (
           <label className="floating-label" style={{ marginTop: "5px" }}>
             <input
               type="text"
@@ -174,28 +221,28 @@ function Section3Mentee({ data, updateData, onNext }) {
         )}
       </div>
 
-      {/* Interests (checkbox numeric) */}
+      {/* Interests (as string) */}
       <div style={{ marginBottom: "15px" }}>
         <label style={{ fontWeight: "bold" }}>Interests:</label>
         <div>
           {INTERESTS_OPTIONS.map((interest) => (
             <label
-              key={interest.id}
+              key={interest}
               style={{ display: "block", marginTop: "5px" }}
             >
               <input
                 type="checkbox"
                 name="interests"
-                value={interest.id}
-                checked={data.interests.includes(interest.id)}
-                onChange={(e) => handleCheckboxChange(e, "interests", "interestsOther")}
+                value={interest}
+                checked={data.interests?.includes(interest)}
+                onChange={(e) => handleCheckbox(e, "interests", "interestsOther")}
               />
-              {` ${interest.label}`}
+              {` ${interest}`}
             </label>
           ))}
         </div>
-        {/* If "Other…" is selected, display the text box */}
-        {hasOtherInterests && (
+        {/* If "Other" is selected, display the text box */}
+        {data.interests?.includes("Other") && (
           <label className="floating-label" style={{ marginTop: "5px" }}>
             <input
               type="text"

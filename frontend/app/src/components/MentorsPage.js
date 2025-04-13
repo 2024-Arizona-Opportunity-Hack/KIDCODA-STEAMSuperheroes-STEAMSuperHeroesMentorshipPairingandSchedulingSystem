@@ -1,7 +1,10 @@
 // src/pages/MentorsPage.jsx
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useContext } from "react";
 import "../styling/ExpandableList.css"; // Import the teal styling
-import { useNavigate } from "react-router-dom";
+ 
+import { useParams, useNavigate } from 'react-router-dom';
+import { AuthContext } from "../context/AuthContext";
+
 
 // ====== Example Mappings for Numeric IDs ======
 // Adjust these to match your actual IDs and labels
@@ -77,6 +80,8 @@ const REASONS_MENTORING_LABELS = {
 };
 
 function MentorsPage() {
+  const { sessionId } = useParams();
+  const { accessToken } = useContext(AuthContext);
   const [mentors, setMentors] = useState([]);
   const [expandedRowId, setExpandedRowId] = useState(null);
   const navigate = useNavigate();
@@ -98,12 +103,18 @@ function MentorsPage() {
   useEffect(() => {
     const fetchMentors = async () => {
       try {
-        const response = await fetch("/api/admin/mentors");
+        const response = await fetch(`/api/v1/user_preferences/?session_name=${sessionId}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+          }
+        });
+
         if (!response.ok) {
           throw new Error("Failed to fetch mentors.");
         }
         const data = await response.json();
-        console.log(data)
+        console.log(data);
         setMentors(data);
       } catch (err) {
         console.error("Error fetching mentors:", err);

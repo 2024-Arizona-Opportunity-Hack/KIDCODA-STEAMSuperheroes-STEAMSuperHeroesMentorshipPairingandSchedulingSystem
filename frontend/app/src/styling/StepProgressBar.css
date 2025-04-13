@@ -1,118 +1,168 @@
 /* src/components/StepProgressBar.css */
 
+/* Wrapper to hold both home button and progress bar */
+.step-progress-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+/* Home button styling */
+.home-button-progress {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #1AA3B0;
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-right: 15px;
+  margin-top: -6px; /* Added to shift the button up by 6px */
+  position: relative; /* Added for better positioning control */
+  top: -6px; /* Alternative way to shift up */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.home-button-progress:hover {
+  background-color: #158f9c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.home-button-progress:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
 /* Container for the entire progress bar */
 .step-progress-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px; /* space below the bar */
-    font-family: 'Montserrat', sans-serif; /* match your form font */
-    flex-wrap: wrap;
-  }
-  
-  /* Each step item is a circle + label + optional connector line */
-  .step-item {
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
-  
-  /* The circle with step number inside */
-  .step-circle {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background-color: #D9D9D9; /* default gray color for unvisited steps */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #000;
-    font-weight: bold;
-    transition: background-color 0.2s ease;
-  }
-  
-  /* Specific status styles */
-  .step-circle.active {
-    background-color: #1AA3B0; /* teal for current step */
-    color: #fff;
-  }
-  
-  .step-circle.completed {
-    background-color: #00D9CF; /* lighter teal for completed steps */
-    color: #000;
-  }
-  
-  .step-circle.inactive {
-    background-color: #A9A9A9; /* dark grey for inactive steps */
-    color: #D3D3D3; /* light grey number */
-  }
-  
-  .step-circle.inactive-specific {
-    background-color: #A9A9A9; /* dark grey */
-    color: #D3D3D3; /* light grey */
-  }
-  
-  /* Step label text below/next to the circle */
-  .step-label {
-    margin-left: 8px;
-    margin-right: 8px;
-    font-size: 14px;
-    width: 120px; /* adjust as needed */
-    text-align: center;
-    transition: color 0.2s ease, text-decoration 0.2s ease;
-  }
-  
-  /* Strikethrough for inactive-specific labels */
-  .step-label.strikethrough {
-    text-decoration: line-through;
-    color: #D3D3D3; /* light grey */
-  }
-  
-  /* Connector line between steps */
-  .step-connector {
-    width: 60px; /* length of the line */
-    height: 2px;
-    background-color: #D9D9D9;
-    margin: 0 10px;
-    transition: background-color 0.2s ease;
-  }
-  
-  .step-connector.connector-inactive {
-    background-color: #A9A9A9; /* dark grey for inactive connectors */
-  }
-  
-  /* Responsive Styles */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px; /* space below the bar */
+  font-family: 'Montserrat', sans-serif; /* match your form font */
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+/* Each step item is a circle + label + optional connector line */
+.step-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* The circle with step number inside */
+.step-circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #D9D9D9; /* default gray color for unvisited steps */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+/* Specific status styles */
+.step-circle.active {
+  background-color: #1AA3B0; /* teal for current step */
+  color: #fff;
+}
+
+.step-circle.completed {
+  background-color: #00D9CF; /* lighter teal for completed steps */
+  color: #000;
+}
+
+.step-circle.inactive {
+  background-color: #A9A9A9; /* dark grey for inactive steps */
+  color: #D3D3D3; /* light grey number */
+}
+
+.step-circle.inactive-specific {
+  background-color: #A9A9A9; /* dark grey */
+  color: #D3D3D3; /* light grey */
+}
+
+/* Step label text below/next to the circle */
+.step-label {
+  margin-left: 8px;
+  margin-right: 8px;
+  font-size: 14px;
+  width: 120px; /* adjust as needed */
+  text-align: center;
+  transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+/* Strikethrough for inactive-specific labels */
+.step-label.strikethrough {
+  text-decoration: line-through;
+  color: #D3D3D3; /* light grey */
+}
+
+/* Connector line between steps */
+.step-connector {
+  width: 60px; /* length of the line */
+  height: 2px;
+  background-color: #D9D9D9;
+  margin: 0 10px;
+  transition: background-color 0.2s ease;
+}
+
+.step-connector.connector-inactive {
+  background-color: #A9A9A9; /* dark grey for inactive connectors */
+}
+
+/* Responsive Styles */
 @media (max-width: 768px) {
-    .step-progress-container {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-  
-    .step-item {
-      flex-direction: row;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-  
-    .step-connector {
-      display: none; /* Hide connectors on smaller screens */
-    }
-  
-    .step-label {
-      width: auto; /* Allow labels to adjust based on content */
-      margin-left: 10px;
-      margin-right: 0;
-    }
+  .step-progress-container {
+    flex-direction: column;
+    align-items: flex-start;
   }
-  
-  @media (max-width: 480px) {
-    .step-circle {
-      width: 25px;
-      height: 25px;
-      font-size: 12px;
-    }
-  
-    .step-label {
-      font-size: 12px;
-    }
+
+  .step-item {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 10px;
   }
+
+  .step-connector {
+    display: none; /* Hide connectors on smaller screens */
+  }
+
+  .step-label {
+    width: auto; /* Allow labels to adjust based on content */
+    margin-left: 10px;
+    margin-right: 0;
+  }
+
+  .step-progress-wrapper {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .home-button-progress {
+    margin-right: 10px;
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .step-circle {
+    width: 25px;
+    height: 25px;
+    font-size: 12px;
+  }
+
+  .step-label {
+    font-size: 12px;
+  }
+}

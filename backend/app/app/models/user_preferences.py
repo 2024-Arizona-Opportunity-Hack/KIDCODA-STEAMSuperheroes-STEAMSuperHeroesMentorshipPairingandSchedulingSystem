@@ -8,10 +8,7 @@ from app.db.base_class import Base
 
 geolocator = Nominatim(user_agent="fastapi-geopy")
 
-def parse_availability_string(availability_str: str) -> List[TimeSlot]:
-    slots = availability_str.split("; ")
-    availability = [TimeSlot(slot.strip()) for slot in slots if slot.strip() in TimeSlot.__members__]
-    return availability
+ 
 
 class menteeMentoringType(BaseModel):
     type: MentoringType
@@ -53,27 +50,21 @@ class UserPreference(Model):
     mentor: Optional[Mentor] = None
     mentee: Optional[Mentee] = None
     availability: List[TimeSlot]
-    availability_str: Optional[str] = None
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     ageBracket: AgeBracket
 
 
-    @model_validator(mode='before')
-    def calculate_coordinates(cls, values):
-        if values.get('latitude') is None or values.get('longitude') is None:
-            city = values.get('city')
-            state = values.get('state')
-            if city and state:
-                location = geolocator.geocode(f"{city}, {state}, USA")
-                if location:
-                    values['latitude'] = location.latitude
-                    values['longitude'] = location.longitude
-        return values
+    # @model_validator(mode='before')
+    # def calculate_coordinates(cls, values):
+    #     if values.get('latitude') is None or values.get('longitude') is None:
+    #         city = values.get('city')
+    #         state = values.get('state')
+    #         if city and state:
+    #             location = geolocator.geocode(f"{city}, {state}, USA")
+    #             if location:
+    #                 values['latitude'] = location.latitude
+    #                 values['longitude'] = location.longitude
+    #     return values
 
-    @model_validator(mode='before')
-    def populate_availability(cls, values):
-        availability_str = values.get('availability_str')
-        if availability_str:
-            values['availability'] = parse_availability_string(availability_str)
-        return values
+     
