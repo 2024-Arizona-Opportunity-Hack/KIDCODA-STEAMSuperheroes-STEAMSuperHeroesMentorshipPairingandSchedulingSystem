@@ -1,0 +1,79 @@
+substitutions:
+  _PROJECT_NAME: 'steam-superheroes'
+  _SECRET_KEY: ''
+  _SERVER_NAME: 'steam-superheroes-backend'
+  _MONGO_DATABASE: ''
+  _MONGO_DATABASE_URI: ''
+  _FIRST_SUPERUSER: ''
+  _FIRST_SUPERUSER_PASSWORD: ''
+  _SMTP_HOST: ''
+  _SMTP_PORT: ''
+  _SMTP_USER: ''
+  _SMTP_PASSWORD: ''
+  _EMAILS_FROM_EMAIL: ''
+  _EMAILS_FROM_NAME: ''
+
+steps:
+  # Build and push backend
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/steam-superheroes/backend:$BUILD_ID'
+      - '-f'
+      - 'backend/backend.dockerfile'
+      - 'backend/'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/steam-superheroes/backend:$BUILD_ID']
+
+  # Deploy backend
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'steam-superheroes-backend'
+      - '--image=us-central1-docker.pkg.dev/$PROJECT_ID/steam-superheroes/backend:$BUILD_ID'
+      - '--region=us-central1'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--port=8000'
+      - '--timeout=900'
+      - '--cpu=1'
+      - '--memory=1Gi'
+      - '--set-env-vars=PROJECT_NAME=${_PROJECT_NAME},SECRET_KEY=${_SECRET_KEY},SERVER_NAME=${_SERVER_NAME},SERVER_HOST=https://steam-superheroes-backend-651515632413.us-central1.run.app,MONGO_DATABASE=${_MONGO_DATABASE},MONGO_DATABASE_URI=${_MONGO_DATABASE_URI},FIRST_SUPERUSER=${_FIRST_SUPERUSER},FIRST_SUPERUSER_PASSWORD=${_FIRST_SUPERUSER_PASSWORD},SMTP_HOST=${_SMTP_HOST},SMTP_PORT=${_SMTP_PORT},SMTP_USER=${_SMTP_USER},SMTP_PASSWORD=${_SMTP_PASSWORD},EMAILS_FROM_EMAIL=${_EMAILS_FROM_EMAIL},EMAILS_FROM_NAME=${_EMAILS_FROM_NAME},SMTP_TLS=True,USERS_OPEN_REGISTRATION=True'
+
+  # Build and push frontend
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/steam-superheroes/frontend:$BUILD_ID'
+      - '-f'
+      - 'frontend/Dockerfile'
+      - 'frontend/'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/steam-superheroes/frontend:$BUILD_ID']
+
+  # Deploy frontend with correct backend URL
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'steam-superheroes-frontend'
+      - '--image=us-central1-docker.pkg.dev/$PROJECT_ID/steam-superheroes/frontend:$BUILD_ID'
+      - '--region=us-central1'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--timeout=900'
+      - '--cpu=1'
+      - '--memory=512Mi'
+      - '--set-env-vars=BACKEND_URL='
+
+  # Test the connectivity
+  - name: 'gcr.io/cloud-builders/curl'
+    args: ['']
+
+  - name: 'gcr.io/cloud-builders/curl'
+    args: ['']
