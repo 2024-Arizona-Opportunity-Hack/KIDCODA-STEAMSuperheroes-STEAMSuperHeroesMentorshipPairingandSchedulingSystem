@@ -1,0 +1,79 @@
+server {
+    listen ${PORT};
+    server_name localhost; # This is for within the container
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # Enable gzip compression
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_types text/plain text/css text/xml text/javascript application/javascript application/xml+rss application/json;
+
+    # Serve static files
+    location / {
+        try_files $uri $uri/ /index.html;
+        add_header Cache-Control "no-cache";
+    }
+
+    # Proxy API requests to backend
+    location ~ ^/api/(.*)$ {
+        proxy_pass ${BACKEND_URL}/api/$1; # $1 captures the path after /api/
+
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $proxy_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+        proxy_redirect off;
+        proxy_read_timeout 90s;
+        proxy_connect_timeout 90s;
+        proxy_send_timeout 90s;
+
+        # Increase buffer sizes for headers
+        proxy_buffer_size   128k;
+        proxy_buffers   4 256k;
+        proxy_busy_buffers_size   256k;
+
+        # DNS resolver for Cloud Run environment (Google's public DNS)
+        resolver 8.8.8.8 8.8.4.4 valid=300s;
+        resolver_timeout 10s;
+
+        # Add CORS headers for API requests
+        add_header Access-Control-Allow-Origin * always;
+        add_header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE" always;
+        add_header Access-Control-Allow-Headers "Content-Type, Authorization" always;
+
+        # Handle preflight requests
+        if ($request_method = 'OPTIONS') {
+            add_header Access-Control-Allow-Origin * always;
+            add_header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE" always;
+            add_header Access-Control-Allow-Headers "Content-Type, Authorization" always;
+            add_header Content-Length 0;
+            add_header Content-Type text/plain;
+            return 204; # Use 204 No Content for OPTIONS preflight
+        }
+    }
+
+    # Proxy docs and other backend routes
+    location ~ ^/(docs|redoc|openapi.json)$ {
+        proxy_pass ${BACKEND_URL}$request_uri;
+        proxy_set_header Host $proxy_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # Increase buffer sizes for headers here as well if needed
+        proxy_buffer_size   128k;
+        proxy_buffers   4 256k;
+        proxy_busy_buffers_size   256k;
+
+        # DNS resolver for Cloud Run environment
+        resolver 8.8.8.8 8.8.4.4 valid=300s;
+        resolver_timeout 10s;
+    }
+}
