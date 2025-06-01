@@ -18,14 +18,20 @@ app = FastAPI(
     lifespan=app_init,
 )
 
-# Set all CORS enabled origins
-if settings.BACKEND_CORS_ORIGINS:
-    app.add_middleware(
-        CORSMiddleware,
-        # Trailing slash causes CORS failures from these supported domains
-        allow_origins=[str(origin).strip("/") for origin in settings.BACKEND_CORS_ORIGINS], # noqa
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+@app.get("/")
+async def root():
+    return {"message": "STEAM Superheroes API is running"}
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
