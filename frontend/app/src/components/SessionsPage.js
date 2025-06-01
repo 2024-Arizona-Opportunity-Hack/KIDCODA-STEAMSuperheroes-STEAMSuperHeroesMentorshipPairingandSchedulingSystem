@@ -135,10 +135,6 @@ function SessionsPage() {
                     <div className="field-value">{session.session_type}</div>
                   </div>
                   <div>
-                    <div className="field-label">Number of Meetings:</div>
-                    <div className="field-value">{session.number_of_meetings}</div>
-                  </div>
-                  <div>
                     <div className="field-label">Meeting Durations:</div>
                     <div className="field-value">
                       {session.meeting_duration.join(", ")}
@@ -147,10 +143,6 @@ function SessionsPage() {
                   <div>
                     <div className="field-label">Cadence:</div>
                     <div className="field-value">{session.cadence}</div>
-                  </div>
-                  <div>
-                    <div className="field-label">Session ID:</div>
-                    <div className="field-value">{session.id}</div>
                   </div>
                 </div>
               </div>

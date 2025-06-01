@@ -26,7 +26,7 @@ const GENDER_LABELS = {
   3: "Transgender Male",
   4: "Transgender Female",
   5: "Prefer not to disclose",
-  6: "Other…",
+  6: "Other",
 };
 
 // 3) Ethnicities
@@ -39,7 +39,7 @@ const ETHNICITY_LABELS = {
   6: "Middle Eastern or North African",
   7: "Native Hawaiian or Pacific Islander",
   8: "White or European",
-  9: "Other…",
+  9: "Other",
 };
 
 // 4) Grade
@@ -64,7 +64,7 @@ const REASONS_MENTEE_LABELS = {
   1: "Career Exploration",
   2: "Do better in school",
   3: "Learn about STEAM",
-  4: "Other…",
+  4: "Other",
 };
 
 // 6) Example: interests
@@ -76,7 +76,7 @@ const INTERESTS_LABELS = {
   5: "Building",
   6: "Robotics",
   7: "Art",
-  8: "Other…",
+  8: "Other",
 };
 
 function MenteesPage() {
@@ -240,7 +240,7 @@ function MenteesPage() {
       .map((id) => {
         if (id === 4 && otherValue) {
           // 4 means "Other" in this example
-          return `Other… (${otherValue})`;
+          return `Other (${otherValue})`;
         }
         return REASONS_MENTEE_LABELS[id] || `Unknown #${id}`;
       })
@@ -253,7 +253,7 @@ function MenteesPage() {
       .map((id) => {
         if (id === 8 && otherValue) {
           // 8 means "Other…" in this example
-          return `Other… (${otherValue})`;
+          return `Other (${otherValue})`;
         }
         return INTERESTS_LABELS[id] || `Unknown #${id}`;
       })

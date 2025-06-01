@@ -59,14 +59,14 @@ class Ethnicity(str, Enum):
     NATIVE_HAWAIIAN_PACIFIC_ISLANDER = "Native Hawaiian or Pacific Islander: Includes Samoan, Buamanian, Chamorro, and Tongan"
     AMERICAN_INDIAN_ALASKA_NATIVE = "American Indian or Alaska Native"
     ASIAN = "Asian: Includes Chinese, Japanese, Filipino, Korean, South Asian, and Vietnamese"
-    OTHER = "Other…"
+    OTHER = "Other"
 
 class Preference(str, Enum):
     PREFER_ONLY = "Prefer ONLY to be matched within that similarity"
     PREFER_IT = "Prefer it, but available to others as needed"
     PREFER_NOT = "Prefer NOT to be matched within that similarity"
     NO_PREFERENCE = "Do not have a preference. Either is fine."
-    OTHER = "Other…"
+    OTHER = "Other"
 
 class Gender(str, Enum):
     CIS_MALE = "Cisgender Male"
@@ -74,7 +74,7 @@ class Gender(str, Enum):
     TRANS_MALE = "Transgender Male"
     TRANS_FEMALE = "Transgender Female"
     PREFER_NOT_DISCLOSE = "Prefer not to disclose"
-    OTHERS = "Other…"
+    OTHER = "Other"
 
 class MentoringType(str, Enum):
     HOMEWORK_HELP = "Homework Help"
@@ -87,7 +87,7 @@ class Method(str, Enum):
     WEB_CONFERENCE = "Web conference (ie. Zoom video conference)"
     IN_PERSON = "In person"
     HYBRID = "Hybrid (both web and in person)"
-    OTHER = "Other:"
+    OTHER = "Other"
 
 class TimeSlot(str, Enum):
     MONDAY_7_9_A = "Monday-7am to 9am"

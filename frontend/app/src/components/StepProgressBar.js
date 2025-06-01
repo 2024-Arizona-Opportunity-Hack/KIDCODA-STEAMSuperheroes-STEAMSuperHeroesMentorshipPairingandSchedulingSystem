@@ -3,13 +3,17 @@ import { FaHome } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "../styling/StepProgressBar.css";
 
-function StepProgressBar({ step, totalSteps, stepLabels, role }) {
+function StepProgressBar({ step, totalSteps, stepLabels, role, isAdmin }) {
   const navigate = useNavigate();
   const defaultLabels = Array.from({ length: totalSteps }, (_, i) => `Step ${i + 1}`);
   const labels = stepLabels && stepLabels.length === totalSteps ? stepLabels : defaultLabels;
 
   const handleHomeClick = () => {
-    navigate("/dashboard");
+    if (isAdmin) {
+      navigate("/admin");
+    } else {
+      navigate("/dashboard");
+    }
   };
 
   return (

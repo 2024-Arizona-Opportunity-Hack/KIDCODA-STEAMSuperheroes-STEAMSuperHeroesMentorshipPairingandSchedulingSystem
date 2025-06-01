@@ -18,8 +18,8 @@ class CRUDPairing(CRUDBase[Match, MatchCreate, MatchUpdate]):
             async with await db.client.start_session() as db_session:
                 async with db_session.start_transaction():
                         try:
-                            await crud_session.update_session(db, session_name=session.name, session_in={"pairing_status": StatusEnum.IN_PROGRESS})
-                            users = await self.engine.find(UserPreference, UserPreference.session_name == session.name)
+                            await crud_session.update_session(db, session_name=session.session_name, session_in={"pairing_status": StatusEnum.IN_PROGRESS})
+                            users = await self.engine.find(UserPreference, UserPreference.session_name == session.session_name)
                             matches, updated_mentees, updated_mentors = find_best_match(list(users))
                             # save_operations = []
                             for mentee in updated_mentees:

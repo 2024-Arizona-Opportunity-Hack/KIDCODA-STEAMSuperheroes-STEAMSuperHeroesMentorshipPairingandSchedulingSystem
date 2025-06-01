@@ -58,7 +58,7 @@ const Dashboard = () => {
   // Define menu items for Mentee Dashboard
   const menuItems = [
     { label: "Dashboard", active: true },
-    { label: "Sessions", active: false, onClick: handleViewSessions },
+    { label: "Sessions", active: false },
     { label: "My Mentors", active: false },
     { label: "My Mentees", active: false },
   ];
@@ -127,16 +127,14 @@ const Dashboard = () => {
       <main className="main-content">
         {/* Header */}
         <header className="header">
-          <div className="search-bar">
-            <input type="text" placeholder="Search or type a command" />
-          </div>
+          
           <div className="header-actions">
             <button className="new-project-btn" onClick={handleNewMatching}>
               + New Session Enrollment
             </button>
-            <div className="profile">
+            {/* <div className="profile">
               <img src="https://via.placeholder.com/30" alt="Profile" />
-            </div>
+            </div> */}
           </div>
         </header>
 

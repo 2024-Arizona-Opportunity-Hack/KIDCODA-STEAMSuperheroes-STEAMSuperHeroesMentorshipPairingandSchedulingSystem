@@ -31,7 +31,7 @@ const ETHNICITY_LABELS = {
   6: "Middle Eastern or North African",
   7: "Native Hawaiian or Pacific Islander",
   8: "White or European",
-  9: "Other…",
+  9: "Other",
 };
 
 // 3) Gender
@@ -41,7 +41,7 @@ const GENDER_LABELS = {
   3: "Transgender Male",
   4: "Transgender Female",
   5: "Prefer not to disclose",
-  6: "Other…",
+  6: "Other",
 };
 
 // 4) Session Preferences

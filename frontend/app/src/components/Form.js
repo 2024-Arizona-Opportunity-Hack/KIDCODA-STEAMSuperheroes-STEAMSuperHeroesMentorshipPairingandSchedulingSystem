@@ -74,7 +74,7 @@ const ETHNICITY_OPTIONS = [
   "Middle Eastern or North African: Includes Lebanese, Iranian, Egyptian, Moroccan, Israeli, and Palestinian",
   "Native Hawaiian or Pacific Islander: Includes Samoan, Guamanian, Chamorro, and Tongan",
   "White or European: Includes German, Irish, English, Italian, Polish, and French",
-  "Other…",
+  "Other",
 ];
 
 // Ethnicity matching preference (radio)
@@ -83,7 +83,7 @@ const ETHNICITY_MATCH_OPTIONS = [
   "Prefer it, but available to others as needed",
   "Prefer NOT to be matched within that similarity",
   "Do not have a preference. Either is fine.",
-  "Other…",
+  "Other",
 ];
 
 // Gender (checkbox) options
@@ -93,7 +93,7 @@ const GENDER_OPTIONS = [
   "Transgender Male",
   "Transgender Female",
   "Prefer not to disclose",
-  "Other…",
+  "Other",
 ];
 
 // Gender matching preference (radio)
@@ -102,7 +102,7 @@ const GENDER_MATCH_OPTIONS = [
   "Prefer it, but available to others as needed",
   "Prefer NOT to be matched within that similarity",
   "Do not have a preference. Either is fine.",
-  "Other…",
+  "Other",
 ];
 
 // Preferred methods (checkbox) options
@@ -110,7 +110,7 @@ const METHOD_OPTIONS = [
   "Web Conference (i.e. Zoom Conference)",
   "In Person",
   "Hybrid (Both In Person and web)",
-  "Other...",
+  "Other",
 ];
 
 // Role (radio)

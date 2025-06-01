@@ -16,7 +16,7 @@ import { FaArrowLeft } from "react-icons/fa";
 function MultiStepForm() {
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
-  const { logout, accessToken } = useContext(AuthContext);
+  const { logout, accessToken, isAdmin } = useContext(AuthContext);
  
   /**
    * formData with numeric IDs for checkboxes/radios
@@ -265,8 +265,11 @@ function MultiStepForm() {
         alert("Form submitted successfully! Your data has been uploaded.");
         
         // final step
-        logout();
-        navigate("/login");
+        if (isAdmin) {
+          navigate("/admin");
+        } else {
+          navigate("/dashboard");
+        }
         
       } catch (err) {
         console.error("Error submitting form:", err);
@@ -307,7 +310,8 @@ function MultiStepForm() {
         step={step}
         totalSteps={totalSteps}
         stepLabels={stepLabels}
-        role={formData.roles} // Pass the whole array
+        role={formData.roles}
+        isAdmin={isAdmin} // Pass the whole array
       />
 
       {step > 1 && (

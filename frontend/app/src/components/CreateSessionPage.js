@@ -2,13 +2,11 @@ import React, { useState, useContext, useEffect, useRef } from "react";
 import "../styling/Form.css";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
 
 const SESSION_TYPE_OPTIONS = [
-  "Homework Help",
-  "Exposure to STEAM in general",
-  "College guidance",
-  "Career guidance",
-  "Explore a particular field",
+  "a",
+  "b",
   "Other: text",
 ];
 
@@ -138,6 +136,7 @@ function CreateSessionPage() {
     nbrMeetings: "",
     meetingDurations: [],
     cadence: "",
+    active: ""
   });
 
   const [errorMsg, setErrorMsg] = useState("");
@@ -174,10 +173,9 @@ function CreateSessionPage() {
     if (!sessionData.sessionStart) return "Session Start Date/Time is required.";
     if (!sessionData.sessionEnd) return "Session End Date/Time is required.";
     if (!sessionData.sessionType) return "Session Type is required.";
-    if (!sessionData.nbrMeetings) return "Number of Meetings is required.";
-    
-    const num = parseInt(sessionData.nbrMeetings, 10);
-    if (isNaN(num) || num < 1) return "Number of Meetings must be a positive integer.";
+    if (!sessionData.active) return "Please select session status (Active/Inactive)";
+    // const num = parseInt(sessionData.nbrMeetings, 10);
+    // if (isNaN(num) || num < 1) return "Number of Meetings must be a positive integer.";
     if (sessionData.meetingDurations.length === 0) return "Select at least one Meeting Duration.";
     if (!sessionData.cadence) return "Cadence is required.";
 
@@ -207,11 +205,11 @@ function CreateSessionPage() {
     }
   
     // Validate number of meetings
-    const numberOfMeetings = parseInt(sessionData.nbrMeetings, 10);
-    if (isNaN(numberOfMeetings) || numberOfMeetings < 0) {
-      setErrorMsg("Number of meetings must be a positive integer");
-      return;
-    }
+    // const numberOfMeetings = parseInt(sessionData.nbrMeetings, 10);
+    // if (isNaN(numberOfMeetings) || numberOfMeetings < 0) {
+    //   setErrorMsg("Number of meetings must be a positive integer");
+    //   return;
+    // }
   
     setLoading(true);
   
@@ -222,9 +220,9 @@ function CreateSessionPage() {
         timezone: timezoneAbbreviation,
         start_time: sessionData.sessionStart,
         end_time: sessionData.sessionEnd,
-        active: true,
+        active: sessionData.active === "true",
         session_type: sessionData.sessionType.toString(),
-        number_of_meetings: numberOfMeetings,
+        // number_of_meetings: numberOfMeetings,
         meeting_duration: sessionData.meetingDurations.map(d => d.toString()),
         cadence: sessionData.cadence.toString(),
         session_name: sessionData.sessionName.toString()
@@ -257,9 +255,10 @@ function CreateSessionPage() {
         sessionStart: "",
         sessionEnd: "",
         sessionType: "",
-        nbrMeetings: "",
+        // nbrMeetings: "",
         meetingDurations: [],
         cadence: "",
+        active: "",
       });
   
     } catch (err) {
@@ -273,7 +272,17 @@ function CreateSessionPage() {
   return (
     <div className="page-container">
       <div className="form-container">
-        <h2 className="form-heading">Create a New Session</h2>
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px', justifyContent: 'space-between' }}>
+          <h2 className="form-heading" style={{ margin: 0 }}>Create a New Session</h2>
+          <button
+            type="button"
+            onClick={() => navigate("/admin")}
+            className="back-button"
+          >
+            <FaArrowLeft size={16} style={{ marginRight: "5px" }} />
+            Back
+          </button>
+        </div>
 
         {errorMsg && <div className="error-message">{errorMsg}</div>}
         {loading && <div className="loading">Creating session...</div>}
@@ -359,7 +368,46 @@ function CreateSessionPage() {
             ))}
           </select>
 
-          <label className="floating-label">
+          <div className="duration-group" style={{ marginBottom: '20px', fontSize: '14px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'normal' }}>Session Status:</label>
+            <div style={{ display: 'flex', gap: '15px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '14px' }}>
+                <input
+                  type="radio"
+                  name="active"
+                  value="true"
+                  checked={sessionData.active === "true"}
+                  onChange={handleChange}
+                />
+                Active
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '14px' }}>
+                <input
+                  type="radio"
+                  name="active"
+                  value="false"
+                  checked={sessionData.active === "false"}
+                  onChange={handleChange}
+                />
+                Inactive
+              </label>
+            </div>
+            {sessionData.active === "true" && (
+              <div style={{ 
+                marginTop: '8px', 
+                padding: '6px', 
+                backgroundColor: '#fff3cd', 
+                border: '1px solid #ffeeba', 
+                borderRadius: '4px', 
+                color: '#856404',
+                fontSize: '12px'
+              }}>
+                Note: Setting this session as active will automatically deactivate any currently active session.
+              </div>
+            )}
+          </div>
+
+          {/* <label className="floating-label">
             <input
               type="number"
               name="nbrMeetings"
@@ -371,7 +419,7 @@ function CreateSessionPage() {
               required
             />
             <span className="floating-label-text">Number of Meetings</span>
-          </label>
+          </label> */}
 
           <div className="duration-checkboxes">
             <label>Meeting Duration(s):</label>

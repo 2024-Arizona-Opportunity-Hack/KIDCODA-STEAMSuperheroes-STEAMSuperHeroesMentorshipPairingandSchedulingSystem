@@ -10,6 +10,9 @@ class SessionCreate(BaseModel):
     end_time: date
     location: str
     session_type: str
+    timezone: str
+    meeting_duration: list[str]
+    cadence: str
     pairing_status: StatusEnum = StatusEnum.NOT_STARTED
     scheduling_status: StatusEnum = StatusEnum.NOT_STARTED
     
@@ -26,6 +29,9 @@ class SessionUpdate(BaseModel):
     end_time: date
     location: str
     session_type: str
+    timezone: str
+    meeting_duration: list[str]
+    cadence: str
     pairing_status: StatusEnum = StatusEnum.NOT_STARTED
     scheduling_status: StatusEnum = StatusEnum.NOT_STARTED
     

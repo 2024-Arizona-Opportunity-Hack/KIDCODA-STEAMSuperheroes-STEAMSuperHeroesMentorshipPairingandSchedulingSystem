@@ -101,11 +101,13 @@ const AdminDashboard = () => {
       console.log("User chose not to proceed.");
       return;
     }
+
     try {
-      const response = await fetch("/api/matching/do", {
-        method: "POST",
+      const response = await fetch("/api/v1/pair/initiate_pairing", {
+        method: "GET",
         headers: {
-          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${accessToken}`,
         },
       });
       if (!response.ok) {
@@ -148,7 +150,7 @@ const AdminDashboard = () => {
   };
 
   const handleViewSessions = () => {
-    navigate("/admin/sessions");
+    navigate("/admin/all-sessions");
   };
 
   const handleViewMentors = () => {
@@ -166,9 +168,9 @@ const AdminDashboard = () => {
   // Menu items for the sidebar
   const menuItems = [
     { label: "Home", onClick: () => navigate("/admin") },
-    { label: "View Mentors", onClick: handleViewMentors },
-    { label: "View Mentees", onClick: handleViewMentees },
-    { label: "Matchings", onClick: handleViewMatchings },
+    // { label: "View Mentors", onClick: handleViewMentors },
+    // { label: "View Mentees", onClick: handleViewMentees },
+    // { label: "Matchings", onClick: handleViewMatchings },
     { label: "View Sessions", onClick: handleViewSessions },
     { label: "View All Users", onClick: handleViewAllUsers},
   ];
@@ -204,12 +206,10 @@ const AdminDashboard = () => {
       <main className="main-content">
         {/* Header */}
         <header className="header">
-          <div className="search-bar">
-            <input type="text" placeholder="Search or type a command" />
-          </div>
+          
           <div className="header-actions">
             <button className="new-project-btn" onClick={handleNewMatching}>
-              + New Mentor Mentee Matching
+              + New Session Enrollment
             </button>
             <button className="new-project-btn" onClick={handleDoMatching}>
               + Perform Matching
@@ -217,9 +217,9 @@ const AdminDashboard = () => {
             <button className="new-project-btn" onClick={handleCreateSession}>
               + Create Session
             </button>
-            <div className="profile">
+            {/* <div className="profile">
               <img src="https://via.placeholder.com/30" alt="Profile" />
-            </div>
+            </div> */}
           </div>
         </header>
 
@@ -239,7 +239,7 @@ const AdminDashboard = () => {
               <span className="stat-icon">🛠️</span>
               <div>
                 <p className="stat-value">35</p>
-                <p className="stat-label">Projects Managed</p>
+                <p className="stat-label">Sessions Managed</p>
               </div>
             </div>
             <div className="stat">
@@ -255,7 +255,7 @@ const AdminDashboard = () => {
         <section className="sessions-section">
           <div className="section-header">
             <h2>Active Sessions</h2>
-            <button className="view-all-btn" onClick={() => navigate("/admin/sessions")}>
+            <button className="view-all-btn" onClick={() => handleViewSessions()}>
               View All
             </button>
           </div>

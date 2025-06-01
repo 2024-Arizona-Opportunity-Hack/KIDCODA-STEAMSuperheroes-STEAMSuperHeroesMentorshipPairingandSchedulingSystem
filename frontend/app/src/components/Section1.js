@@ -70,7 +70,7 @@ const ETHNICITIES = [
   "Native Hawaiian or Pacific Islander: Includes Samoan, Buamanian, Chamorro, and Tongan",
   "American Indian or Alaska Native",
   "Asian: Includes Chinese, Japanese, Filipino, Korean, South Asian, and Vietnamese",
-  "Other…"
+  "Other"
 ];
 
 // Ethnicity Match Options - direct strings
@@ -79,7 +79,7 @@ const ETHNICITY_MATCH_OPTIONS = [
   "Prefer it, but available to others as needed",
   "Prefer NOT to be matched within that similarity",
   "Do not have a preference. Either is fine.",
-  "Other…"
+  "Other"
 ];
 
 // Gender Options - direct strings
@@ -89,7 +89,7 @@ const GENDER_OPTIONS = [
   "Transgender Male",
   "Transgender Female",
   "Prefer not to disclose",
-  "Other…"
+  "Other"
 ];
 
 // Gender Match Options - direct strings
@@ -98,7 +98,7 @@ const GENDER_MATCH_OPTIONS = [
   "Prefer it, but available to others as needed",
   "Prefer NOT to be matched within that similarity",
   "Do not have a preference. Either is fine.",
-  "Other…"
+  "Other"
 ];
 
 // Method Options - direct strings
@@ -106,7 +106,7 @@ const METHOD_OPTIONS = [
   "Web conference (ie. Zoom video conference)",  // Changed from "Web Conference"
   "In person",                                   // Changed from "In Person" 
   "Hybrid (both web and in person)",             // Changed from "Hybrid (Both In Person and web)"
-  "Other:"                                       // Changed from "Other..."
+  "Other"                                       // Changed from "Other..."
 ];
 
 

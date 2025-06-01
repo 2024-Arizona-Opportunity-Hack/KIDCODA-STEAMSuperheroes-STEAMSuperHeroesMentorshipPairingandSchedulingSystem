@@ -10,5 +10,8 @@ class Session(Base):
     end_time: datetime    # Changed from date to datetime
     location: str
     session_type: str
+    timezone: str
+    meeting_duration: list[str]
+    cadence: str
     pairing_status: StatusEnum = StatusEnum.NOT_STARTED
     scheduling_status: StatusEnum = StatusEnum.NOT_STARTED

@@ -16,6 +16,7 @@ import RegisterForm from "./components/RegisterForm.js"; // Import the RegisterF
 import ForgotPasswordForm from "./components/ForgetPassword.js";
 import AllUsersPage from "./components/AllUsersPage.js";
 import CityAutocomplete from "./components/CityAutoComplete.js";
+import SessionsPage from "./components/SessionsPage.js";
 
 const App = () => {
   return (
@@ -95,6 +96,15 @@ const App = () => {
             element={
               <PrivateRoute adminOnly={true}>
                 <AllUsersPage />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/admin/all-sessions"
+            element={
+              <PrivateRoute adminOnly={true}>
+                <SessionsPage />
               </PrivateRoute>
             }
           />
