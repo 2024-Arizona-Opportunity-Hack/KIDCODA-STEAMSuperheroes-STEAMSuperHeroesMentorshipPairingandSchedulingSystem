@@ -1,4 +1,4 @@
-name: Deploy to Google Cloud
+name: Build, Push, and Deploy to Google Cloud
 
 on:
   push:
@@ -6,38 +6,93 @@ on:
       - main
 
 env:
-  PROJECT_ID: steam-superheroes-beta
-  SERVICE_NAME: service-name
-  REGION: us-central1 
+  PROJECT_ID: steam-superheroes-beta 
+  GAR_REGION: us-central1 
+  CLOUD_RUN_REGION: us-central1 
+  GAR_REPOSITORY_NAME: steam-superheroes 
+
+  BACKEND_IMAGE_NAME: backend
+  BACKEND_SERVICE_NAME: steam-superheroes-backend 
+  BACKEND_DOCKERFILE_PATH: backend/backend.dockerfile
+  BACKEND_CONTEXT_PATH: backend/
+
+  # Frontend specific
+  FRONTEND_IMAGE_NAME: frontend
+  FRONTEND_SERVICE_NAME: steam-superheroes-frontend # Cloud Run service name for frontend
+  FRONTEND_DOCKERFILE_PATH: frontend/Dockerfile
+  FRONTEND_CONTEXT_PATH: frontend/
+
+  # Environment variables from cloudbuild.yaml substitutions
+  SERVER_NAME: steam-superheroes-backend # Matches BACKEND_SERVICE_NAME
+  MONGO_DATABASE: steam-superheroes-db
+  FIRST_SUPERUSER: swati@steamsuperheroes.org
+  SMTP_HOST: sandbox.smtp.mailtrap.io
+  SMTP_PORT: '2525'
+  EMAILS_FROM_EMAIL: info@steam-superheroes.com
+  EMAILS_FROM_NAME: SS
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    # No id-token permission needed if not using WIF
+    # permissions:
+    #   contents: 'read'
+    #   id-token: 'write'
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
+
+    - name: Authenticate to Google Cloud
+      uses: 'google-github-actions/auth@v2'
+      with:
+        credentials_json: '${{ secrets.GCP_SA_KEY }}' # Use the Service Account Key JSON from secrets
 
     - name: Set up Cloud SDK
-      uses: google-github-actions/setup-gcloud@v1
-      with:
-        project_id: ${{ env.PROJECT_ID }}
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
-        export_default_credentials: true
+      uses: google-github-actions/setup-gcloud@v2
 
-    - name: Authenticate Docker to Google Cloud Registry
-      run: |
-        gcloud auth configure-docker
+    - name: Authenticate Docker to Google Artifact Registry
+      run: |-
+        gcloud auth configure-docker ${{ env.GAR_REGION }}-docker.pkg.dev
 
-    - name: Build and Push Docker image
+    # --- Backend Build and Push ---
+    - name: Build and Push Backend Docker image
       run: |
-        docker build -t gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ github.sha }} .
-        docker push gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+        docker build -t ${{ env.GAR_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.GAR_REPOSITORY_NAME }}/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }} \
+          -f ${{ env.BACKEND_DOCKERFILE_PATH }} \
+          ${{ env.BACKEND_CONTEXT_PATH }}
+        docker push ${{ env.GAR_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.GAR_REPOSITORY_NAME }}/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }}
 
-    - name: Deploy to Cloud Run
+    # --- Frontend Build and Push ---
+    - name: Build and Push Frontend Docker image
       run: |
-        gcloud run deploy ${{ env.SERVICE_NAME }} \
-          --image gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ github.sha }} \
-          --region ${{ env.REGION }} \
+        docker build -t ${{ env.GAR_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.GAR_REPOSITORY_NAME }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }} \
+          -f ${{ env.FRONTEND_DOCKERFILE_PATH }} \
+          ${{ env.FRONTEND_CONTEXT_PATH }}
+        docker push ${{ env.GAR_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.GAR_REPOSITORY_NAME }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }}
+
+    # --- Deploy Backend to Cloud Run ---
+    - name: Deploy Backend to Cloud Run
+      id: deploy_backend
+      run: |
+        gcloud run deploy ${{ env.BACKEND_SERVICE_NAME }} \
+          --image ${{ env.GAR_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.GAR_REPOSITORY_NAME }}/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }} \
+          --region ${{ env.CLOUD_RUN_REGION }} \
           --platform managed \
-          --allow-unauthenticated 
+          --allow-unauthenticated \
+          --set-env-vars="MONGO_DATABASE_URI=${{ secrets.MONGO_DATABASE_URI }},SECRET_KEY=${{ secrets.SECRET_KEY }},FIRST_SUPERUSER=${{ env.FIRST_SUPERUSER }},FIRST_SUPERUSER_PASSWORD=${{ secrets.FIRST_SUPERUSER_PASSWORD }},SMTP_HOST=${{ env.SMTP_HOST }},SMTP_PORT=${{ env.SMTP_PORT }},SMTP_USER=${{ secrets.SMTP_USER }},SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }},EMAILS_FROM_EMAIL=${{ env.EMAILS_FROM_EMAIL }},EMAILS_FROM_NAME=${{ env.EMAILS_FROM_NAME }},MONGO_DATABASE=${{ env.MONGO_DATABASE }},SERVER_NAME=${{ env.SERVER_NAME }}" \
+          --port 8000
+          # Add other necessary flags
+
+    # --- Deploy Frontend to Cloud Run ---
+    - name: Deploy Frontend to Cloud Run
+      run: |
+        BACKEND_URL=$(gcloud run services describe ${{ env.BACKEND_SERVICE_NAME }} --platform managed --region ${{ env.CLOUD_RUN_REGION }} --format 'value(status.url)')
+        gcloud run deploy ${{ env.FRONTEND_SERVICE_NAME }} \
+          --image ${{ env.GAR_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.GAR_REPOSITORY_NAME }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }} \
+          --region ${{ env.CLOUD_RUN_REGION }} \
+          --platform managed \
+          --allow-unauthenticated \
+          --set-env-vars="API_URL=${BACKEND_URL}" \
+          --port 80
+          # Add other necessary flags
